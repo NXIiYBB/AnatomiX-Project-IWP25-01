@@ -95,145 +95,57 @@ function Chat() {
 	// 	{ id: 'profile', icon: <BsPersonCircle />, label: 'Profile', href: '#profile' },
 	// ];
 
-	return (
-		<div className="chatbot-container">
-			<div className="main-layout">
+  return (
+    <div style={{ maxWidth: "600px", margin: "0 auto", padding: "1rem" }}>
+      <h2>Demo Chat</h2>
+      <div style={{ border: "1px solid #ccc", padding: "1rem", minHeight: "400px", overflowY: "auto" }}>
+        {messages.map((msg, i) => (
+          <div key={i} style={{ marginBottom: "1rem" }}>
+            {msg.role === "user" ? (
+              <div style={{ textAlign: "right", background: "#DCF8C6", display: "inline-block", padding: "0.5rem 1rem", borderRadius: "10px" }}>
+                {msg.text}
+              </div>
+            ) : (
+              <div style={{ textAlign: "left" }}>
+                {msg.parsed.title && <h4>{msg.parsed.title}</h4>}
+                {msg.parsed.summary && <p><strong>Summary:</strong> {msg.parsed.summary}</p>}
+                {msg.parsed.keyPoints && (
+                  <div>
+                    <strong>Key points:</strong>
+                    <ul>
+                      {msg.parsed.keyPoints.map((kp, idx) => <li key={idx}>{kp}</li>)}
+                    </ul>
+                  </div>
+                )}
+                {msg.parsed.shortExplanation && <p><strong>Short explanation:</strong> {msg.parsed.shortExplanation}</p>}
+                {msg.parsed.analogy && <p><strong>Analogy/Example:</strong> {msg.parsed.analogy}</p>}
+                {msg.parsed.followUp && <p><strong>Follow-up:</strong> {msg.parsed.followUp}</p>}
+                {msg.parsed.references && (
+                  <div>
+                    <strong>References:</strong>
+                    <ul>
+                      {msg.parsed.references.map((ref, idx) => <li key={idx}>{ref}</li>)}
+                    </ul>
+                  </div>
+                )}
+                {!msg.parsed.title && !msg.parsed.summary && <p>{msg.parsed.raw}</p>}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
 
-				{/* Left Navigation */}
-				<Navbar />
-				{/* <div className="menu">
-					<div className='logo'>
-						<BiBookAlt className="logo-icon" />
-						<h2>AnatomiX</h2>
-					</div>
-
-					<nav className="menu-container">
-						<ul className="menu--list">
-							<li>
-								<a href="/home" className="item"><BiHome className="icon" />Home</a>
-							</li>
-							<li>
-								<a href="/chatbot" className="item"><BiMessage className="icon" />ChatBot</a>
-							</li>
-							<li>
-								<a href="/quiz" className="item"><VscLightbulbSparkle className="icon" />Quiz</a>
-							</li>
-							<li>
-								<a href="/profile" className="item"><BsPersonCircle className="icon" />Profile</a>
-							</li>
-						</ul>
-					</nav>
-				</div> */}
-
-				{/* Center Chat Area */}
-				<div className="chat-area">
-					{/* <div className="header-title">
-						<h1>AI ChatBot</h1>
-					</div> */}
-
-
-					{/* Topic Display */}
-					{topic && !showTopicInput && (
-						<div className="topic-display">
-							<h3>{topic}</h3>
-						</div>
-					)}
-
-					{/* Topic Input Modal */}
-					{showTopicInput && (
-						<div className="topic-modal">
-							<div className="topic-modal-content">
-								<h2>Start Learning!</h2>
-								<p>What would you like to ask or talk about?</p>
-								<form onSubmit={handleTopicSubmit}>
-									<input
-										type="text"
-										value={topic}
-										onChange={(e) => setTopic(e.target.value)}
-										// placeholder="เช่น การทำอาหาร, เทคโนโลยี, การศึกษา..."
-										className="topic-input"
-										autoFocus
-									/>
-									<button type="submit" className="topic-submit-btn">
-										Start
-									</button>
-								</form>
-							</div>
-						</div>
-					)}
-
-					{/* Chat Messages */}
-					{!showTopicInput && (
-						<>
-							<div className="messages-container">
-								{messages.map(message => (
-									<div key={message.id} className={`message ${message.sender}`}>
-										<div className="message-content">
-											<p>{message.text}</p>
-											<span className="timestamp">{message.timestamp}</span>
-										</div>
-									</div>
-								))}
-								<div ref={messagesEndRef} />
-							</div>
-
-							{/* Message Input */}
-							<form onSubmit={handleMessageSubmit} className="message-form">
-								<div className="input-container">
-									<input
-										type="text"
-										value={inputMessage}
-										onChange={(e) => setInputMessage(e.target.value)}
-										placeholder="Type a new message here"
-										className="message-input"
-									/>
-									<button type="submit" className="send-btn">Send</button>
-								</div>
-							</form>
-						</>
-					)}
-				</div>
-
-				{/* Right History Sidebar */}
-				<div className="right-sidebar">
-					<div className="sidebar-header">
-						<h3>Chat history</h3>
-						<button className="new-chat-btn" onClick={startNewChat}>
-							<span><BiSolidCommentAdd /></span> Create New Topic</button>
-					</div>
-					<div className="history-list">
-						{chatHistory.length === 0 ? (
-							<div className="empty-history">
-								<p>No chat history.</p>
-							</div>
-						) : (
-							chatHistory.map(history => (
-								<div key={history.id} className="history-item">
-									<div className="history-topic">
-										<h4>{history.topic}</h4>
-									</div>
-									<div className="history-meta">
-										<span className="history-date">{history.date}</span>
-										<span className="history-time">{history.time}</span>
-									</div>
-								</div>
-							))
-						)}
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-	// return (
-	//   <div className="chatbot">
-	//     <Sidebar />
-	//     <div className="chatbot--content">
-	//       <ChatContent />
-	//       <HistoryTopic />
-	//     </div>
-	//   </div>
-
-	// );
-};
-
-export default Chat;
+      <div style={{ display: "flex", marginTop: "1rem" }}>
+        <input
+          type="text"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          style={{ flex: 1, padding: "0.5rem" }}
+          placeholder="Type a message..."
+          onKeyDown={e => e.key === "Enter" && handleSend()}
+        />
+        <button onClick={handleSend} style={{ padding: "0.5rem 1rem" }}>Send</button>
+      </div>
+    </div>
+  );
+}

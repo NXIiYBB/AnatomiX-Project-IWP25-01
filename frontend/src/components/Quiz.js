@@ -4,12 +4,12 @@ import Navbar from './Navbar';
 
 function Quiz () {
 
-    return (
+  return (
         <div>
             <Navbar />
             <p>QUIZ</p>
-        </div>
-    );
+    </div>
+  );
 };
 
 export default Quiz;
