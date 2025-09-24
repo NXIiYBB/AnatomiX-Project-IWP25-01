@@ -7,7 +7,7 @@ function Quiz () {
   return (
         <div>
             <Navbar />
-            <p>QUIZ</p>
+            <p>QUIZ </p>
     </div>
   );
 };
