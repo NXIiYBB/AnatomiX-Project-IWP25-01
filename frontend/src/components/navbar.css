@@ -1,0 +1,170 @@
+.menu {
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between; /* โลโก้ซ้าย เมนูขวา */
+    align-items: center;            /* จัดกลางในแนวตั้ง */
+    background-color: #f9f9f9;      /* เพิ่มพื้นหลัง */
+    height: 60px;                   /* กำหนดความสูงคงที่ */
+    position: r;                /* ตรึง navbar ด้านบน */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;                  /* กัน navbar ถูกบัง */
+}
+.logo-icon {
+    font-size: 30px;
+    
+}
+
+.icon {
+    font-size: 20px;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #27374d;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu--list {
+    display: flex;
+    flex-direction: row;  /* 👉 เรียงเมนูแนวนอน */
+    gap: 20px;
+}
+
+.menu--list .item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: 0.3s ease-in-out;
+    color: #27374d;
+}
+
+.menu--list .item:hover {
+    background-color: #27374d;
+    color: #dde6ed;
+}
+/* ======================================================== */
+/* .menu {
+    display: flex;
+    flex-direction: column;
+    gap: 2.3rem;
+    height: 94vh;
+}
+
+.logo {
+    text-align: center; 
+    padding: 20px;
+    color: #27374d;
+    align-items: center;
+    display: flex;
+    gap: 20px;
+} */
+
+/* .logo h1 {
+    font-size: 28px;
+} */
+
+/* ul {
+    list-style-type: none;
+}
+
+.logo-icon {
+    font-size: 4rem;
+}
+
+.menu--list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.menu--list .item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 1.1rem;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 10px;
+    transition: 0.3 ease-in-out;
+    color: #27374d;
+}
+
+.menu--list .item:hover{
+    background-color: #27374d;
+    color: #dde6ed;
+} */
+
+/* ================================= */
+/* .menu {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2.3rem;
+    height: 94vh;
+}
+
+.logo {
+    text-align: center;
+    padding: 10px;
+    color: #27374d;
+    align-items: center;
+    display: flex;
+    gap: 10px;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.logo h2 {
+    font-size: 30px;
+}
+
+.logo-icon {
+    font-size: 2rem;
+}
+
+.icon {
+    font-size: 1.4rem;
+}
+
+.menu--list {
+    padding-left: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.menu--list .item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 1.1rem;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 10px;
+    transition: 0.3 ease-in-out;
+    color: #27374d;
+}
+
+.menu--list .item:hover {
+    background-color: #27374d;
+    color: #dde6ed;
+} */
+
