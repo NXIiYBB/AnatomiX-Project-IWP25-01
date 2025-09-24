@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 
 // import Navbar from './components/Navbar';
 import Home from './components/Home';
-import Chat from './components/Chat';
+import Chat from './components/chat';
 import Quiz from "./components/Quiz";
 import Profile from "./components/Profile";
 import SignIn from './components/SignIn';
