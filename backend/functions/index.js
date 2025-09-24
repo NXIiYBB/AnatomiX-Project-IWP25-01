@@ -1,32 +1,116 @@
+const functions = require("firebase-functions");
+const cors = require("cors");
+const express = require("express");
+const admin = require("firebase-admin");
+const {authenticate} = require("./functions/auth");
+const {signIn, logIn} = require("./functions/test");
+const {createQuiz, addQuizResult} = require("./functions/quiz");
+const {createConversation, addMessage, getConversationHistory} = require("./functions/addMessage");
+const { GoogleGenAI } = require("@google/genai");
+const fs = require("fs");
+const path = require("path");
+const { db } = require("./functions/firebase");
+const { doc, collection, addDoc, serverTimestamp, orderBy, getDocs, query } = require("firebase/firestore");
+
+const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY,})
+
+const app = express();
+app.use(cors({origin: true}));
+app.use(express.json());
+
+admin.initializeApp();
+
+app.get("/profile", authenticate, (req, res) => {
+  res.json({
+    message: "ข้อมูลนี้เฉพาะผู้ใช้ที่ล็อกอิน",
+    uid: req.user.uid,
+    email: req.user.email,
+  });
+});
+
+app.post("/signIn", signIn, (req, res) => {});
+app.post("/logIn", logIn, (req, res) => {});
+app.get("/chat/newConversation", createConversation, (req, res) => {});
+app.get("/chat/addMessage", addMessage, (req, res) => {});
+app.get("/chat/history", getConversationHistory, (req, res) => {});
+app.post("/quiz/create", createQuiz, (req, res) => {});
+
+const systemPrompt = fs.readFileSync(
+  path.join(__dirname, "system_prompt.txt"),
+  "utf-8"
+); 
+
+
+// uid, conversationId, text
 /**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
+ * Chat
+ * @param {Request} req
+ * @param {Response} res
+ * @return {void}
  */
+app.post("/chat", async (req, res) => {
+  try {
+    const { uid, conversationId, text } = req.body;
 
-const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/https");
-const logger = require("firebase-functions/logger");
+    // ดึงข้อมูลแชทเดิม
+    const messagesRef = collection(
+      db,
+      "users",
+      uid,
+      "conversations",
+      conversationId,
+      "messages"
+    );
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
+    const q = query(messagesRef, orderBy("createdAt", "asc"));
+    const snapshot = await getDocs(q);
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+    // ข้อมูลแชทเดิมจาก Firestore
+    const history = snapshot.docs
+      .map(doc => doc.data())
+      .filter(msg => msg.text)
+      .map(msg => ({
+        role: msg.role,
+        parts: [{ type: "text", text: msg.text }]
+      }));
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+    const contents = [
+      {
+        role: "model",
+        parts: [{ type: "text", text: systemPrompt }]
+      },
+      ...history,
+      {
+        role: "user",
+        parts: [{ type: "text", text: text }]
+      }
+    ];
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: contents,
+    });
+
+    // บันทึก user message
+    await addDoc(messagesRef, {
+      role: "user",
+      text,
+      createdAt: serverTimestamp(),
+    });
+
+    // บันทึก model reply
+    await addDoc(messagesRef, {
+      role: "model",
+      text: response.text,
+      createdAt: serverTimestamp(),
+    });
+    
+    res.json({ "response": response.text})
+  } catch (error) {
+    console.error("Chat error:", error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+exports.api = functions.https.onRequest(app);
+
