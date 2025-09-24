@@ -1,135 +1,239 @@
-import React, { useState } from "react";
+import React from 'react';
+import './chatbot.css';
+import { useState, useEffect, useRef } from 'react';
+import { BiHome, BiBookAlt, BiMessage } from 'react-icons/bi';
+import { VscLightbulbSparkle } from 'react-icons/vsc';
+import { BsPersonCircle } from 'react-icons/bs';
+import { BiSolidCommentAdd } from 'react-icons/bi';
+import Navbar from './Navbar';
 
-// parser จากตัวอย่างก่อนหน้า
-function parseGeneralAIResponse(rawText) {
-  const result = {};
+function Chat() {
 
-  const titleMatch = rawText.match(/###\s*(.+)/);
-  if (titleMatch) result.title = titleMatch[1].trim();
+	const [topic, setTopic] = useState('');
+	const [showTopicInput, setShowTopicInput] = useState(true);
+	const [messages, setMessages] = useState([]);
+	const [inputMessage, setInputMessage] = useState('');
+	const [chatHistory, setChatHistory] = useState([]);
+	// const [activeMenu, setActiveMenu] = useState('chat');
+	const messagesEndRef = useRef(null);
 
-  const summaryMatch = rawText.match(/\*\*Summary:\*\*\s*([\s\S]*?)(?=\n\*\*|$)/);
-  if (summaryMatch) result.summary = summaryMatch[1].trim();
+	// Auto scroll to bottom of chat
+	const scrollToBottom = () => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	};
 
-  const keyPointsMatch = rawText.match(/\*\*Key points:\*\*\s*([\s\S]*?)(?=\n\*\*|$)/);
-  if (keyPointsMatch) {
-    result.keyPoints = keyPointsMatch[1]
-      .split(/\n\s*\*\s*/)
-      .map(line => line.trim())
-      .filter(Boolean);
-  }
+	useEffect(() => {
+		scrollToBottom();
+	}, [messages]);
 
-  const shortExpMatch = rawText.match(/\*\*Short explanation:\*\*\s*([\s\S]*?)(?=\n\*\*|$)/);
-  if (shortExpMatch) result.shortExplanation = shortExpMatch[1].trim();
+	// Handle topic submission
+	const handleTopicSubmit = (e) => {
+		e.preventDefault();
+		if (topic.trim()) {
+			setShowTopicInput(false);
+			setMessages([
+				{
+					id: 1,
+					text: `Hello! I'm ready to talk with you about "${topic}". Do you have anything you'd like to ask?`,
+					sender: 'ai',
+					timestamp: new Date().toLocaleTimeString()
+				}
+			]);
 
-  const analogyMatch = rawText.match(/\*\*Analogy\/Example:\*\*\s*([\s\S]*?)(?=\n\*\*|$)/);
-  if (analogyMatch) result.analogy = analogyMatch[1].trim();
+			// Add to chat history
+			const newHistory = {
+				id: Date.now(),
+				topic: topic,
+				date: new Date().toLocaleDateString(),
+				time: new Date().toLocaleTimeString()
+			};
+			setChatHistory(prev => [newHistory, ...prev]);
+		}
+	};
 
-  const followUpMatch = rawText.match(/\*\*Follow-up:\*\*\s*([\s\S]*?)(?=\n\*\*|$)/);
-  if (followUpMatch) result.followUp = followUpMatch[1].trim();
+	// Handle message submission
+	const handleMessageSubmit = (e) => {
+		e.preventDefault();
+		if (inputMessage.trim()) {
+			const userMessage = {
+				id: Date.now(),
+				text: inputMessage,
+				sender: 'user',
+				timestamp: new Date().toLocaleTimeString()
+			};
 
-  const referencesMatch = rawText.match(/\*\*References:\*\*\s*([\s\S]*?)(?=\n\*\*|$)/);
-  if (referencesMatch) {
-    result.references = referencesMatch[1]
-      .split(/\n\s*\*\s*/)
-      .map(line => line.trim())
-      .filter(Boolean);
-  }
+			setMessages(prev => [...prev, userMessage]);
 
-  const metaMatch = rawText.match(/\*\*Meta:\*\*\s*([\s\S]*?)(?=\n\*\*|$)/);
-  if (metaMatch) result.meta = metaMatch[1].trim();
+			// Simulate AI response
+			setTimeout(() => {
+				const aiResponse = {
+					id: Date.now() + 1,
+					text: `Here is the answer related to: ${inputMessage}`,
+					sender: 'ai',
+					timestamp: new Date().toLocaleTimeString()
+				};
+				setMessages(prev => [...prev, aiResponse]);
+			}, 1000);
 
-  result.raw = rawText;
+			setInputMessage('');
+		}
+	};
 
-  return result;
-}
+	// Start new chat
+	const startNewChat = () => {
+		setTopic('');
+		setShowTopicInput(true);
+		setMessages([]);
+		setInputMessage('');
+	};
 
-// Component แชท
-export default function Chat() {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
+	// Navigation items
+	// const navItems = [
+	// 	{ id: 'home', icon: <BiHome />, label: 'Home', href: '#home' },
+	// 	{ id: 'chat', icon: <BiMessage />, label: 'AI ChatBot', href: '#chat' },
+	// 	{ id: 'quiz', icon: <VscLightbulbSparkle />, label: 'Quiz', href: '#quiz' },
+	// 	{ id: 'profile', icon: <BsPersonCircle />, label: 'Profile', href: '#profile' },
+	// ];
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
+	return (
+		<div className="chatbot-container">
+			<div className="main-layout">
 
-    // แสดงข้อความ user
-    const userMsg = { role: "user", text: input };
-    setMessages(prev => [...prev, userMsg]);
-    setInput("");
+				{/* Left Navigation */}
+				<Navbar />
+				{/* <div className="menu">
+					<div className='logo'>
+						<BiBookAlt className="logo-icon" />
+						<h2>AnatomiX</h2>
+					</div>
 
-    try {
-      // เรียก API ของเรา (ตัวอย่าง URL)
-      const res = await fetch("http://127.0.0.1:5001/anatomix-c8c63/us-central1/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            uid: "4SnEjXzW5NaZTDkPXJBhEQafenM2", 
-            conversationId: "2hjLSrLht6vst2FYdH6C", 
-            text: input
-        }),
-      });
-      const data = await res.json();
+					<nav className="menu-container">
+						<ul className="menu--list">
+							<li>
+								<a href="/home" className="item"><BiHome className="icon" />Home</a>
+							</li>
+							<li>
+								<a href="/chatbot" className="item"><BiMessage className="icon" />ChatBot</a>
+							</li>
+							<li>
+								<a href="/quiz" className="item"><VscLightbulbSparkle className="icon" />Quiz</a>
+							</li>
+							<li>
+								<a href="/profile" className="item"><BsPersonCircle className="icon" />Profile</a>
+							</li>
+						</ul>
+					</nav>
+				</div> */}
 
-      // parse response AI
-      const parsedAI = parseGeneralAIResponse(data.response);
+				{/* Center Chat Area */}
+				<div className="chat-area">
+					{/* <div className="header-title">
+						<h1>AI ChatBot</h1>
+					</div> */}
 
-      setMessages(prev => [...prev, { role: "ai", parsed: parsedAI }]);
-    } catch (err) {
-      console.error(err);
-      setMessages(prev => [...prev, { role: "ai", parsed: { raw: "Error contacting AI." } }]);
-    }
-  };
 
-  return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", padding: "1rem" }}>
-      <h2>Demo Chat</h2>
-      <div style={{ border: "1px solid #ccc", padding: "1rem", minHeight: "400px", overflowY: "auto" }}>
-        {messages.map((msg, i) => (
-          <div key={i} style={{ marginBottom: "1rem" }}>
-            {msg.role === "user" ? (
-              <div style={{ textAlign: "right", background: "#DCF8C6", display: "inline-block", padding: "0.5rem 1rem", borderRadius: "10px" }}>
-                {msg.text}
-              </div>
-            ) : (
-              <div style={{ textAlign: "left" }}>
-                {msg.parsed.title && <h4>{msg.parsed.title}</h4>}
-                {msg.parsed.summary && <p><strong>Summary:</strong> {msg.parsed.summary}</p>}
-                {msg.parsed.keyPoints && (
-                  <div>
-                    <strong>Key points:</strong>
-                    <ul>
-                      {msg.parsed.keyPoints.map((kp, idx) => <li key={idx}>{kp}</li>)}
-                    </ul>
-                  </div>
-                )}
-                {msg.parsed.shortExplanation && <p><strong>Short explanation:</strong> {msg.parsed.shortExplanation}</p>}
-                {msg.parsed.analogy && <p><strong>Analogy/Example:</strong> {msg.parsed.analogy}</p>}
-                {msg.parsed.followUp && <p><strong>Follow-up:</strong> {msg.parsed.followUp}</p>}
-                {msg.parsed.references && (
-                  <div>
-                    <strong>References:</strong>
-                    <ul>
-                      {msg.parsed.references.map((ref, idx) => <li key={idx}>{ref}</li>)}
-                    </ul>
-                  </div>
-                )}
-                {!msg.parsed.title && !msg.parsed.summary && <p>{msg.parsed.raw}</p>}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+					{/* Topic Display */}
+					{topic && !showTopicInput && (
+						<div className="topic-display">
+							<h3>{topic}</h3>
+						</div>
+					)}
 
-      <div style={{ display: "flex", marginTop: "1rem" }}>
-        <input
-          type="text"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          style={{ flex: 1, padding: "0.5rem" }}
-          placeholder="Type a message..."
-          onKeyDown={e => e.key === "Enter" && handleSend()}
-        />
-        <button onClick={handleSend} style={{ padding: "0.5rem 1rem" }}>Send</button>
-      </div>
-    </div>
-  );
-}
+					{/* Topic Input Modal */}
+					{showTopicInput && (
+						<div className="topic-modal">
+							<div className="topic-modal-content">
+								<h2>Start Learning!</h2>
+								<p>What would you like to ask or talk about?</p>
+								<form onSubmit={handleTopicSubmit}>
+									<input
+										type="text"
+										value={topic}
+										onChange={(e) => setTopic(e.target.value)}
+										// placeholder="เช่น การทำอาหาร, เทคโนโลยี, การศึกษา..."
+										className="topic-input"
+										autoFocus
+									/>
+									<button type="submit" className="topic-submit-btn">
+										Start
+									</button>
+								</form>
+							</div>
+						</div>
+					)}
+
+					{/* Chat Messages */}
+					{!showTopicInput && (
+						<>
+							<div className="messages-container">
+								{messages.map(message => (
+									<div key={message.id} className={`message ${message.sender}`}>
+										<div className="message-content">
+											<p>{message.text}</p>
+											<span className="timestamp">{message.timestamp}</span>
+										</div>
+									</div>
+								))}
+								<div ref={messagesEndRef} />
+							</div>
+
+							{/* Message Input */}
+							<form onSubmit={handleMessageSubmit} className="message-form">
+								<div className="input-container">
+									<input
+										type="text"
+										value={inputMessage}
+										onChange={(e) => setInputMessage(e.target.value)}
+										placeholder="Type a new message here"
+										className="message-input"
+									/>
+									<button type="submit" className="send-btn">Send</button>
+								</div>
+							</form>
+						</>
+					)}
+				</div>
+
+				{/* Right History Sidebar */}
+				<div className="right-sidebar">
+					<div className="sidebar-header">
+						<h3>Chat history</h3>
+						<button className="new-chat-btn" onClick={startNewChat}>
+							<span><BiSolidCommentAdd /></span> Create New Topic</button>
+					</div>
+					<div className="history-list">
+						{chatHistory.length === 0 ? (
+							<div className="empty-history">
+								<p>No chat history.</p>
+							</div>
+						) : (
+							chatHistory.map(history => (
+								<div key={history.id} className="history-item">
+									<div className="history-topic">
+										<h4>{history.topic}</h4>
+									</div>
+									<div className="history-meta">
+										<span className="history-date">{history.date}</span>
+										<span className="history-time">{history.time}</span>
+									</div>
+								</div>
+							))
+						)}
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+	// return (
+	//   <div className="chatbot">
+	//     <Sidebar />
+	//     <div className="chatbot--content">
+	//       <ChatContent />
+	//       <HistoryTopic />
+	//     </div>
+	//   </div>
+
+	// );
+};
+
+export default Chat;

@@ -1,14 +1,38 @@
 import React from "react";
+import { BiHome, BiBookAlt, BiMessage } from 'react-icons/bi';
+import { VscLightbulbSparkle } from 'react-icons/vsc';
+import { BsPersonCircle } from 'react-icons/bs';
+import './navbar.css';
 import { Link } from "react-router-dom";
 
-export default function Navbar() {
+
+function Navbar() {
   return (
-    <nav style={{ backgroundColor: "#0d6efd", padding: "10px 20px", color: "white" }}>
-      <h2 style={{ display: "inline-block", marginRight: "20px" }}>AnatomiX</h2>
-      <Link to="/home" style={{ color: "white", marginRight: "15px" }}>Home</Link>
-      <Link to="/chat" style={{ color: "white", marginRight: "15px" }}>Chat</Link>
-      <Link to="/quiz" style={{ color: "white", marginRight: "15px" }}>Quiz</Link>
-      <Link to="/profile" style={{ color: "white" }}>Profile</Link>
+        <div className="menu">
+            <div className='logo'>
+                <BiBookAlt className="logo-icon"/>
+                <h1>AnatomiX</h1>
+            </div>
+
+            <nav className="menu-container">
+                <ul className="menu--list">
+                    <li>
+                        <Link to="/home" className="item"><BiHome className="icon" />Home</Link>
+                    </li>
+                    <li>
+                        <Link to="/chat" className="item"><BiMessage className="icon" />ChatBot</Link>
+                    </li>
+                    <li>
+                        <Link to="/quiz" className="item"><VscLightbulbSparkle className="icon" />Quiz</Link>
+                    </li>
+                    <li>
+                        <Link to="/profile" className="item"><BsPersonCircle className="icon" />Profile</Link>
+                    </li>
+                </ul>
     </nav>
+        </div>
+
   );
 }
+
+export default Navbar;

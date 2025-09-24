@@ -1,10 +1,15 @@
-import React from "react";
+import React from 'react';
+import './home.css';
+import Navbar from './Navbar';
 
-export default function Home() {
+function Home() {
+
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Welcome to AnatomiX</h1>
-      <p>Explore human body interactively. Chat with AI, create quizzes, and study diagrams!</p>
+        <div>
+            <Navbar />
+            <p>Home</p>
     </div>
   );
-}
+};
+
+export default Home;

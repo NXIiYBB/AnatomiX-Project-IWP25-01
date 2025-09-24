@@ -1,10 +1,15 @@
-import React from "react";
+import React from 'react';
+import Navbar from './Navbar';
+// import './aiChatbotPage.css';
 
-export default function Quiz() {
+function Quiz () {
+
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Create & Take Quizzes</h1>
-      <p>Select topics, choose number of questions and difficulty level, then test your knowledge.</p>
+        <div>
+            <Navbar />
+            <p>QUIZ</p>
     </div>
   );
-}
+};
+
+export default Quiz;
