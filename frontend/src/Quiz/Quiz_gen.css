@@ -1,0 +1,153 @@
+/* Quiz_gen.css */
+:root {
+  --text: #333;       /* เน้นตัวหนังสือ */
+  --bg: #fff;         /* พื้นหลังหลัก */
+  --accent: #2563eb;  /* สีน้ำเงินสำหรับปุ่ม/ไฮไลต์ */
+  --muted: #f3f6fb;   /* พื้นหลังรองเล็กน้อย */
+  --radius: 12px;
+  --shadow: 0 6px 18px rgba(37,99,235,0.08);
+  --gap: 16px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* เบื้องต้น - layout */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--text);
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+
+/* container จัดกลางหน้า */
+.quiz-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: var(--bg);
+}
+
+/* card หลัก */
+.quiz-card {
+  width: 100%;
+  max-width: 760px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
+  border: 1px solid rgba(37,99,235,0.06); /* เล็กๆ เพื่อขอบชัด */
+}
+
+/* title */
+.quiz-title {
+  margin: 0 0 18px 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+}
+
+/* form layout */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+/* select & inputs */
+.form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: linear-gradient(180deg, var(--bg), var(--muted));
+  font-size: 1rem;
+  color: var(--text);
+  outline: none;
+  transition: box-shadow .15s ease, border-color .15s ease;
+}
+
+/* focus state */
+.form-group select:focus {
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+  border-color: var(--accent);
+}
+
+/* layout of buttons */
+/* container ของปุ่ม */
+
+/* container ของปุ่ม */
+.button-group {
+  display: grid;
+  justify-content: center;
+  gap: 16px;  
+  margin-top: 50px;             /* ระยะห่างจากด้านบน container */
+}
+
+/* ปุ่มทั่วไป */
+/* ปรับปุ่มทั่วไปให้เท่ากัน */
+.btn {
+  display: inline-flex;         /* ใช้ flex ภายในปุ่ม */
+  align-items: center;          /* จัดข้อความกลางแนวตั้ง */
+  justify-content: center;      /* จัดข้อความกลางแนวนอน */
+  height: 48px;                 /* ความสูงเท่ากันทุกปุ่ม */
+  min-width: 160px;             /* กำหนดความกว้างขั้นต่ำ */
+  padding: 0 24px;              /* padding แนวนอนเท่ากัน */
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1;               /* กำหนดบรรทัดเท่ากัน */
+  white-space: nowrap;
+  cursor: pointer;
+  box-sizing: border-box;       /* ให้ padding+border รวมใน height/width */
+  transition: transform .08s ease, box-shadow .12s ease;
+}
+
+/* ปรับปุ่ม primary (generate) */
+.btn.generate {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: transparent;
+  box-shadow: 0 6px 14px rgba(37,99,235,0.14);
+}
+
+/* ปุ่ม secondary (clear) */
+.btn.clear {
+  background: var(--bg);
+  color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: none;
+}
+
+/* hover / active ให้ uniform */
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); box-shadow: none; }
+
+
+/* quiz summary (หลัง generate) */
+.quiz-summary {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+.quiz-summary p {
+  margin: 6px 0;
+  color: var(--text);
+  font-size: 1rem;
+}
