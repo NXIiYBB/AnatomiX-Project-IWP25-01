@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 
 
 function Navbar() {
-    return (
+  return (
         <div className="menu">
             <div className='logo'>
                 <BiBookAlt className="logo-icon"/>
@@ -29,10 +29,10 @@ function Navbar() {
                         <Link to="/profile" className="item"><BsPersonCircle className="icon" />Profile</Link>
                     </li>
                 </ul>
-            </nav>
+    </nav>
         </div>
 
-    );
+  );
 }
 
 export default Navbar;

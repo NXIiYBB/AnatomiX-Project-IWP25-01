@@ -95,7 +95,7 @@ function Chat() {
 	// 	{ id: 'profile', icon: <BsPersonCircle />, label: 'Profile', href: '#profile' },
 	// ];
 
-  return (
+	return (
 		<div className="chatbot-container">
 			<div className="main-layout">
 
@@ -105,7 +105,7 @@ function Chat() {
 					<div className='logo'>
 						<BiBookAlt className="logo-icon" />
 						<h2>AnatomiX</h2>
-              </div>
+					</div>
 
 					<nav className="menu-container">
 						<ul className="menu--list">
@@ -121,7 +121,7 @@ function Chat() {
 							<li>
 								<a href="/profile" className="item"><BsPersonCircle className="icon" />Profile</a>
 							</li>
-                    </ul>
+						</ul>
 					</nav>
 				</div> */}
 
@@ -136,8 +136,8 @@ function Chat() {
 					{topic && !showTopicInput && (
 						<div className="topic-display">
 							<h3>{topic}</h3>
-                  </div>
-                )}
+						</div>
+					)}
 
 					{/* Topic Input Modal */}
 					{showTopicInput && (
@@ -159,8 +159,8 @@ function Chat() {
 									</button>
 								</form>
 							</div>
-                  </div>
-                )}
+						</div>
+					)}
 
 					{/* Chat Messages */}
 					{!showTopicInput && (
@@ -171,17 +171,17 @@ function Chat() {
 										<div className="message-content">
 											<p>{message.text}</p>
 											<span className="timestamp">{message.timestamp}</span>
-              </div>
-          </div>
-        ))}
+										</div>
+									</div>
+								))}
 								<div ref={messagesEndRef} />
-      </div>
+							</div>
 
 							{/* Message Input */}
 							<form onSubmit={handleMessageSubmit} className="message-form">
 								<div className="input-container">
-        <input
-          type="text"
+									<input
+										type="text"
 										value={inputMessage}
 										onChange={(e) => setInputMessage(e.target.value)}
 										placeholder="Type a new message here"
@@ -221,9 +221,9 @@ function Chat() {
 						)}
 					</div>
 				</div>
-      </div>
-    </div>
-  );
+			</div>
+		</div>
+	);
 	// return (
 	//   <div className="chatbot">
 	//     <Sidebar />
