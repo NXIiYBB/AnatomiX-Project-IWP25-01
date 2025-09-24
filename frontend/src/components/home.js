@@ -4,12 +4,12 @@ import Navbar from './Navbar';
 
 function Home() {
 
-  return (
+    return (
         <div>
             <Navbar />
             <p>Home</p>
-    </div>
-  );
+        </div>
+    );
 };
 
 export default Home;
