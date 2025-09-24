@@ -172,7 +172,6 @@ function Chat() {
 											<p>{message.text}</p>
 											<span className="timestamp">{message.timestamp}</span>
               </div>
-            )&rbrace;
           </div>
         ))}
 								<div ref={messagesEndRef} />
