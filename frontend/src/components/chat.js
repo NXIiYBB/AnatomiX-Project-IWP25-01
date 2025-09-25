@@ -5,8 +5,7 @@ import { BiHome, BiBookAlt, BiMessage } from 'react-icons/bi';
 import { VscLightbulbSparkle } from 'react-icons/vsc';
 import { BsPersonCircle } from 'react-icons/bs';
 import { BiSolidCommentAdd } from 'react-icons/bi';
-import Navbar from './navbar';
-import { auth } from "../firebase";
+import Navbar from './Navbar';
 
 function Chat() {
 
