@@ -4,10 +4,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 // import './App.css';
 
 // import Navbar from './components/Navbar';
-import Home from './components/Home';
+import Home from './components/home';
 import Chat from './components/chat';
-import Quiz from "./components/Quiz";
-import Profile from "./components/Profile";
+import Quiz from "./components/quiz";
+import Profile from "./components/profile";
 import SignIn from './components/SignIn';
 
 

@@ -209,7 +209,7 @@ body {
     justify-content: flex-end;
 }
 
-.message.ai {
+.message.model {
     justify-content: flex-start;
 }
 
@@ -227,7 +227,7 @@ body {
     border-bottom-right-radius: 8px;
 }
 
-.message.ai .message-content {
+.message.model .message-content {
     background: white;
     color: #2c3e50;
     border-bottom-left-radius: 8px;

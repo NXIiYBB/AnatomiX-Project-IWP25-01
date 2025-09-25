@@ -9,7 +9,7 @@ const { collection, setDoc, getDocs, doc } = require("firebase/firestore");
  * @param {Response} res
  * @return {void}
  */
-async function signIn(req, res) {
+async function signUp(req, res) {
     const querySnapshot = await getDocs(collection(db, "users"));
     const usernameTaken = querySnapshot.docs.some(doc => doc.data().username === req.body.username);
 
@@ -74,4 +74,4 @@ async function logIn(req, res, next) {
     }
 }
 
-module.exports = {signIn, logIn};
+module.exports = {signUp, logIn};

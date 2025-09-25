@@ -41,15 +41,27 @@ async function addMessage(req, res) {
  */
 async function createConversation(req, res) {
   try {
-    const conversationsRef = collection(db, "users", req.body.uid, "conversations");
+    const { uid, title } = req.body;
 
-    await addDoc(conversationsRef, {
-      title: req.body.title,
+    if (!uid || !title) {
+      return res.status(400).json({ error: "❌ uid and title are required" });
+    }
+
+    const conversationsRef = collection(db, "users", uid, "conversations");
+
+    const docRef = await addDoc(conversationsRef, {
+      title,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
 
-    res.json({message: "Successful!"});
+    res.json({
+      conversationId: docRef.id,
+      title,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      message: "✅ Conversation created successfully!",
+    });
   } catch (error) {
     res.status(400).json({error: "❌ Error creating conversation:" + error});
   }
@@ -63,7 +75,7 @@ async function createConversation(req, res) {
  * @return {void}
  */
 async function getConversationHistory(req, res) {
-  try {const {uid, conversationId} = req.body;
+  try {const {uid, conversationId} = req.query;
   const messagesRef = collection(
     db,
     "users",
@@ -76,12 +88,46 @@ async function getConversationHistory(req, res) {
   const q = query(messagesRef, orderBy("createdAt", "asc"));
   const snapshot = await getDocs(q);
 
-  console.log(snapshot.docs.map(doc => doc.data()));
-  res.json({res: snapshot.docs.map(doc => doc.data())});
+  const messages = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    res.json({ res: messages });
   // return snapshot.docs.map(doc => doc.data());
 } catch (error) {
   res.status(400).json({error: "❌ Error get conversation history:" + error});
 }
 }
 
-module.exports = {addMessage, createConversation, getConversationHistory};
+// uid
+/**
+ * get Conversation list
+ * @param {Request} req
+ * @param {Response} res
+ * @return {void}
+ */
+async function getConversationList(req, res) {
+  try {const {uid} = req.query;
+  const messagesRef = collection(
+    db,
+    "users",
+    uid,
+    "conversations"
+  );
+
+  const q = query(messagesRef, orderBy("createdAt", "asc"));
+  const snapshot = await getDocs(q);
+
+  const conversations = snapshot.docs.map(doc => ({
+    id: doc.id,    
+    ...doc.data(), 
+  }));
+
+  res.json({ res: conversations });
+} catch (error) {
+  res.status(400).json({error: "❌ Error get conversation history:" + error.message});
+}
+}
+
+module.exports = {addMessage, createConversation, getConversationHistory, getConversationList};

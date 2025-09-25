@@ -4,10 +4,10 @@ import { BsPersonSquare } from 'react-icons/bs';
 import { AiFillEdit, AiFillMessage, AiTwotoneStar } from 'react-icons/ai';
 import { LuLogOut } from 'react-icons/lu';
 import { GiNotebook } from 'react-icons/gi';
-import { BsGraphUp, BsRobot, BsCalendar2CheckFill } from 'react-icons/bs';
-import Navbar from './Navbar';
+import { BsRobot, BsCalendar2CheckFill } from 'react-icons/bs';
+import Navbar from './navbar';
 
-const Profile = () => {
+function Profile() {
     const [user, setUser] = useState({
         id: 1,
         username: 'John Doe',

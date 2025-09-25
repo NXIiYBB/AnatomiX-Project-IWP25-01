@@ -3,9 +3,9 @@ const cors = require("cors");
 const express = require("express");
 const admin = require("firebase-admin");
 const {authenticate} = require("./functions/auth");
-const {signIn, logIn} = require("./functions/test");
+const {signUp, logIn} = require("./functions/test");
 const {createQuiz, addQuizResult} = require("./functions/quiz");
-const {createConversation, addMessage, getConversationHistory} = require("./functions/addMessage");
+const {createConversation, addMessage, getConversationHistory, getConversationList} = require("./functions/addMessage");
 const { GoogleGenAI } = require("@google/genai");
 const fs = require("fs");
 const path = require("path");
@@ -15,7 +15,7 @@ const { doc, collection, addDoc, serverTimestamp, orderBy, getDocs, query } = re
 const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY,})
 
 const app = express();
-app.use(cors({origin: true}));
+app.use(cors({origin: true }));
 app.use(express.json());
 
 admin.initializeApp();
@@ -28,11 +28,12 @@ app.get("/profile", authenticate, (req, res) => {
   });
 });
 
-app.post("/signIn", signIn, (req, res) => {});
+app.post("/signUp", signUp, (req, res) => {});
 app.post("/logIn", logIn, (req, res) => {});
-app.get("/chat/newConversation", createConversation, (req, res) => {});
+app.post("/chat/newConversation", createConversation, (req, res) => {});
 app.get("/chat/addMessage", addMessage, (req, res) => {});
 app.get("/chat/history", getConversationHistory, (req, res) => {});
+app.get("/chat/historyList", getConversationList, (req, res) => {});
 app.post("/quiz/create", createQuiz, (req, res) => {});
 
 const systemPrompt = fs.readFileSync(
@@ -105,7 +106,7 @@ app.post("/chat", async (req, res) => {
       createdAt: serverTimestamp(),
     });
     
-    res.json({ "response": response.text})
+    res.json({ "response": {text: response.text, role: "model"}})
   } catch (error) {
     console.error("Chat error:", error);
     res.status(500).json({ error: "Something went wrong" });
