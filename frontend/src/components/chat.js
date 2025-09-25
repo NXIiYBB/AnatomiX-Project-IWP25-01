@@ -2,62 +2,21 @@ import React from 'react';
 import './chatbot.css';
 import { useState, useEffect, useRef } from 'react';
 import { BiHome, BiBookAlt, BiMessage } from 'react-icons/bi';
-// import { VscLightbulbSparkle } from 'react-icons/vsc';
+import { VscLightbulbSparkle } from 'react-icons/vsc';
 import { BsPersonCircle } from 'react-icons/bs';
 import { BiSolidCommentAdd } from 'react-icons/bi';
 import Navbar from './navbar';
 import { auth } from "../firebase";
 
 function Chat() {
+
 	const [topic, setTopic] = useState('');
-	const [showTopicInput, setShowTopicInput] = useState(false);
+	const [showTopicInput, setShowTopicInput] = useState(true);
 	const [messages, setMessages] = useState([]);
 	const [inputMessage, setInputMessage] = useState('');
 	const [chatHistory, setChatHistory] = useState([]);
 	// const [activeMenu, setActiveMenu] = useState('chat');
-  const [selectedConversationId, setSelectedConversationId] = useState(null);
 	const messagesEndRef = useRef(null);
-  const [message, setMessage] = useState([]);
-
-  const uid = auth.currentUser?.uid;
-
-  // ดึง conversation list
-  useEffect(() => {
-    if (!uid) return;
-
-    const fetchConversations = async () => {
-      try {
-        const res = await fetch(
-          `http://localhost:5001/anatomix-c8c63/us-central1/api/chat/historyList?uid=${uid}`
-        );
-        const data = await res.json();
-        setChatHistory(data.res); // data.res ต้องมี id + title
-      } catch (err) {
-        console.error("Error fetching conversations:", err);
-      }
-    };
-
-    fetchConversations();
-  }, [uid]);
-
-  // ดึง messages เมื่อเลือก conversation
-  useEffect(() => {
-    if (!selectedConversationId) return;
-
-    const fetchMessages = async () => {
-      try {
-        const res = await fetch(
-          `http://localhost:5001/anatomix-c8c63/us-central1/api/chat/history?uid=${uid}&conversationId=${selectedConversationId}`
-        );
-        const data = await res.json();
-        setMessages(data.res); // สมมติ API return array of {role, text, createdAt}
-      } catch (err) {
-        console.error("Error fetching messages:", err);
-      }
-    };
-
-    fetchMessages();
-  }, [selectedConversationId, uid]);
 
 	// Auto scroll to bottom of chat
 	const scrollToBottom = () => {
@@ -69,101 +28,57 @@ function Chat() {
 	}, [messages]);
 
 	// Handle topic submission
-	const handleTopicSubmit = async(e) => {
+	const handleTopicSubmit = (e) => {
 		e.preventDefault();
-		if (!topic.trim()) return;
+		if (topic.trim()) {
+			setShowTopicInput(false);
+			setMessages([
+				{
+					id: 1,
+					text: `Hello! I'm ready to talk with you about "${topic}". Do you have anything you'd like to ask?`,
+					sender: 'ai',
+					timestamp: new Date().toLocaleTimeString()
+				}
+			]);
 
-  try {
-    const res = await fetch("http://localhost:5001/anatomix-c8c63/us-central1/api/chat/newConversation", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            uid,            // user id ปัจจุบัน
-            title: topic // ชื่อหัวข้อ (topic)
-          }),
-        });
-
-        if (!res.ok) {
-          throw new Error("Failed to create conversation");
-        }
-
-        const data = await res.json();
-        setMessages([
-         {
-            id: 123456,
-            text: `Hello! I'm ready to talk with you about "${topic}". Do you have anything you'd like to ask?`,
-            role: 'model',
-            timestamp: new Date().toLocaleTimeString()
-          }
-        ]);
-
-        // สมมติ backend ส่งกลับ { conversationId, title, createdAt, updatedAt }
-        const newConversation = {
-          id: data.conversationId,
-          title: data.title,
-          createdAt: data.createdAt,
-          updatedAt: data.updatedAt,
-        };
-
-        // อัปเดต state ให้แสดงหัวข้อใหม่ใน history
-        setChatHistory((prev) => [newConversation, ...prev]);
-
-        // เซ็ต topic และ conversationId ปัจจุบัน
-        setTopic(newConversation.title);
-        setSelectedConversationId(newConversation.id);
-
-        // ปิด modal
-        setShowTopicInput(false);
-
-      } catch (err) {
-        console.error("Error creating conversation:", err);
-      }
+			// Add to chat history
+			const newHistory = {
+				id: Date.now(),
+				topic: topic,
+				date: new Date().toLocaleDateString(),
+				time: new Date().toLocaleTimeString()
+			};
+			setChatHistory(prev => [newHistory, ...prev]);
+		}
 	};
 
 	// Handle message submission
-	const handleMessageSubmit = async (e) => {
-    e.preventDefault();
+	const handleMessageSubmit = (e) => {
+		e.preventDefault();
+		if (inputMessage.trim()) {
+			const userMessage = {
+				id: Date.now(),
+				text: inputMessage,
+				sender: 'user',
+				timestamp: new Date().toLocaleTimeString()
+			};
 
-    if (!inputMessage.trim()) return; // กัน empty message
-    const userMessage = inputMessage; // เก็บค่าปัจจุบัน
-    setInputMessage("");
+			setMessages(prev => [...prev, userMessage]);
 
-    // แสดงข้อความผู้ใช้ในหน้าจอทันที
-    setMessages((prev) => [...prev, { text: userMessage, role: "user" }]);
+			// Simulate AI response
+			setTimeout(() => {
+				const aiResponse = {
+					id: Date.now() + 1,
+					text: `Here is the answer related to: ${inputMessage}`,
+					sender: 'ai',
+					timestamp: new Date().toLocaleTimeString()
+				};
+				setMessages(prev => [...prev, aiResponse]);
+			}, 1000);
 
-    try {
-      const response = await fetch(
-        "http://localhost:5001/anatomix-c8c63/us-central1/api/chat",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            uid,
-            conversationId: selectedConversationId,
-            text: userMessage,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("❌ Failed to send message");
-      }
-
-      const data = await response.json();
-
-      // สมมติ response เป็น { res: message }
-      console.log(data.response);
-      setMessages((prev) => [...prev, data.response]);
-
-      // clear input
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
+			setInputMessage('');
+		}
+	};
 
 	// Start new chat
 	const startNewChat = () => {
@@ -185,8 +100,31 @@ function Chat() {
 		<div className="chatbot-container">
 			<div className="main-layout">
 
-				{/* Navigation */}
+				{/* Left Navigation */}
 				<Navbar />
+				{/* <div className="menu">
+					<div className='logo'>
+						<BiBookAlt className="logo-icon" />
+						<h2>AnatomiX</h2>
+					</div>
+
+					<nav className="menu-container">
+						<ul className="menu--list">
+							<li>
+								<a href="/home" className="item"><BiHome className="icon" />Home</a>
+							</li>
+							<li>
+								<a href="/chatbot" className="item"><BiMessage className="icon" />ChatBot</a>
+							</li>
+							<li>
+								<a href="/quiz" className="item"><VscLightbulbSparkle className="icon" />Quiz</a>
+							</li>
+							<li>
+								<a href="/profile" className="item"><BsPersonCircle className="icon" />Profile</a>
+							</li>
+						</ul>
+					</nav>
+				</div> */}
 
 				{/* Center Chat Area */}
 				<div className="chat-area">
@@ -196,13 +134,11 @@ function Chat() {
 
 
 					{/* Topic Display */}
-					<div className="topic-display">
-						<h3>{
-              chatHistory.find((chat) => chat.id === selectedConversationId)?.title 
-              || "เลือกบทสนทนา"
-            }</h3>
-					</div>
-					
+					{topic && !showTopicInput && (
+						<div className="topic-display">
+							<h3>{topic}</h3>
+						</div>
+					)}
 
 					{/* Topic Input Modal */}
 					{showTopicInput && (
@@ -232,10 +168,10 @@ function Chat() {
 						<>
 							<div className="messages-container">
 								{messages.map(message => (
-									<div key={message.id} className={`message ${message.role}`}>
+									<div key={message.id} className={`message ${message.sender}`}>
 										<div className="message-content">
 											<p>{message.text}</p>
-											{/* <span className="timestamp">{message.timestamp}</span> */}
+											<span className="timestamp">{message.timestamp}</span>
 										</div>
 									</div>
 								))}
@@ -272,14 +208,14 @@ function Chat() {
 								<p>No chat history.</p>
 							</div>
 						) : (
-							chatHistory.map((conv) => (
-								<div 
-                key={conv.id}
-                className={"history-item"}
-                onClick={() => setSelectedConversationId(conv.id)}
-                >
-									<div className="history-topic" onClick={() => setTopic(conv.title)}>
-										<h4>{conv.title}</h4>
+							chatHistory.map(history => (
+								<div key={history.id} className="history-item">
+									<div className="history-topic">
+										<h4>{history.topic}</h4>
+									</div>
+									<div className="history-meta">
+										<span className="history-date">{history.date}</span>
+										<span className="history-time">{history.time}</span>
 									</div>
 								</div>
 							))
