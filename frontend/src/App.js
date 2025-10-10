@@ -9,7 +9,8 @@ import Chat from './components/chat';
 import Quiz from "./components/quiz";
 import Profile from "./components/profile";
 import SignIn from './components/SignIn';
-
+import QuizGen from "./Quiz/Quiz_gen";
+import QuizPage from "./Quiz/QuizPage";
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -30,7 +31,9 @@ function App() {
 
                         <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
                         <Route path="/chat" element={isLoggedIn ? <Chat /> : <Navigate to="/login" />} />
-                        <Route path="/quiz" element={isLoggedIn ? <Quiz /> : <Navigate to="/login" />} />
+                        {/* <Route path="/quiz" element={isLoggedIn ? <Quiz /> : <Navigate to="/login" />} /> */}
+                        <Route path="/quiz-gen" element={isLoggedIn ? <QuizGen /> : <Navigate to="/login" />} />
+                        <Route path="/quiz-page" element={isLoggedIn ? <QuizPage /> : <Navigate to="/login" />} />
                         <Route path="/profile" element={isLoggedIn ? <Profile setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/login" />} />
 
                         <Route path="*" element={<Navigate to={isLoggedIn ? "/home" : "/login"} />} />
