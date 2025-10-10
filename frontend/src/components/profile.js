@@ -5,7 +5,7 @@ import { AiFillEdit, AiFillMessage, AiTwotoneStar } from 'react-icons/ai';
 import { LuLogOut } from 'react-icons/lu';
 import { GiNotebook } from 'react-icons/gi';
 import { BsGraphUp, BsRobot, BsCalendar2CheckFill } from 'react-icons/bs';
-import Navbar from './navbar.js';
+import Navbar from './navbar';
 
 const Profile = () => {
     const [user, setUser] = useState({
