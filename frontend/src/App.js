@@ -4,9 +4,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 // import './App.css';
 
 // import Navbar from './components/Navbar';
-import Home from './components/home';
+import Home from './Homepage/index';
 import Chat from './components/chat';
-import Quiz from "./components/quiz";
+// import Quiz from "./components/quiz";
 import Profile from "./components/profile";
 import SignIn from './components/SignIn';
 import QuizGen from "./Quiz/Quiz_gen";

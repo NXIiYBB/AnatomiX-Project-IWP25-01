@@ -2,10 +2,12 @@ import React from "react";
 import "./Homepage.css";
 import FeatureCard from "./featurecard";
 import physioimg from "../pics/physio3.png";
+import Navbar from '../components/navbar';
 
 export default function AnatomixLanding() {
   return (
     <div className="container">
+      <Navbar />
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-text">

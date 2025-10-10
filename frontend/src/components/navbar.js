@@ -23,7 +23,7 @@ function Navbar() {
                         <Link to="/chat" className="item"><BiMessage className="icon" />ChatBot</Link>
                     </li>
                     <li>
-                        <Link to="/quiz" className="item"><VscLightbulbSparkle className="icon" />Quiz</Link>
+                        <Link to="/quiz-gen" className="item"><VscLightbulbSparkle className="icon" />Quiz</Link>
                     </li>
                     <li>
                         <Link to="/profile" className="item"><BsPersonCircle className="icon" />Profile</Link>

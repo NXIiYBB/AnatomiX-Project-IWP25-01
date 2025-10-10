@@ -1,15 +1,15 @@
-import React from 'react';
-import Navbar from './Navbar';
-// import './aiChatbotPage.css';
+// import React from 'react';
+// import Navbar from './Navbar';
+// // import './aiChatbotPage.css';
 
-function Quiz () {
+// function Quiz () {
 
-  return (
-        <div>
-            <Navbar />
-            <p>QUIZ</p>
-    </div>
-  );
-};
+//   return (
+//         <div>
+//             <Navbar />
+//             <p>QUIZ</p>
+//     </div>
+//   );
+// };
 
-export default Quiz;
+// export default Quiz;
