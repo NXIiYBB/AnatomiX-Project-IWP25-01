@@ -37,7 +37,7 @@ app.get("/chat/historyList", getConversationList, (req, res) => {});
 app.post("/quiz/create", createQuiz, (req, res) => {});
 
 const systemPrompt = fs.readFileSync(
-  path.join(__dirname, "system_prompt.txt"),
+  path.join(__dirname, "../prompt/system_prompt.txt"),
   "utf-8"
 ); 
 
@@ -92,6 +92,8 @@ app.post("/chat", async (req, res) => {
       contents: contents,
     });
 
+    res.json({ "response": {text: response.text, role: "model"}})
+
     // บันทึก user message
     await addDoc(messagesRef, {
       role: "user",
@@ -105,8 +107,6 @@ app.post("/chat", async (req, res) => {
       text: response.text,
       createdAt: serverTimestamp(),
     });
-    
-    res.json({ "response": {text: response.text, role: "model"}})
   } catch (error) {
     console.error("Chat error:", error);
     res.status(500).json({ error: "Something went wrong" });

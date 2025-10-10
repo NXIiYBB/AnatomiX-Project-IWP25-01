@@ -1,10 +1,11 @@
+const { error } = require("firebase-functions/logger");
 const { auth, db } = require("./firebase");
 const { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } = require("firebase/auth");
 const { collection, setDoc, getDocs, doc } = require("firebase/firestore");
 
 // email, password, username
 /**
- * Sign In
+ * Sign up
  * @param {Request} req
  * @param {Response} res
  * @return {void}
@@ -14,7 +15,7 @@ async function signUp(req, res) {
     const usernameTaken = querySnapshot.docs.some(doc => doc.data().username === req.body.username);
 
     if (usernameTaken) {
-        return res.json({ message: "Username already taken." });
+        return res.status(400).json({ error: "Username already taken." });
     }
 
     try {
