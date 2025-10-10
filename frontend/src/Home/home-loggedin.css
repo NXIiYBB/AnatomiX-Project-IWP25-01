@@ -1,0 +1,120 @@
+/* Container หลัก */
+.home-container {
+  font-family: "Poppins", sans-serif;
+  color: #1a1a1a;
+  background-color: #f0f4ff;
+  margin: 10px 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-size: medium;
+}
+
+/* Hero Section */
+.hero-section {
+  background: url("https://images.unsplash.com/photo-1649073586428-e288125d930a?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") center/cover no-repeat;
+  color: #fff;
+  text-align: center;
+  padding: 140px 20px;
+  position: relative;
+}
+
+.hero-overlay {
+  background: rgba(230, 237, 255, 0.85); /* น้ำเงินโปร่งใส */
+  padding: 80px 60px; /* กรอบใหญ่ขึ้นสำหรับ logged-in */
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.hero-section h1 {
+  color: #1947ab;
+  font-size: 2.6rem; /* ขนาดใหญ่ขึ้นสำหรับ logged-in */
+  margin-bottom: 16px;
+}
+
+.hero-section p {
+  color: #1947ab;
+  max-width: 700px;
+  margin: 0 auto 40px;
+  font-weight: bold;
+  line-height: 1.8;
+}
+
+/* Offers Section */
+.offers-section {
+  text-align: center;
+  padding: 80px 20px;
+  background-color: #ffffff;
+}
+
+.offer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+  margin-top: 40px;
+}
+
+.offer-card {
+  background: #e6edff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.offer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.offer-card .icon {
+  font-size: 2.2rem;
+  color: #2563eb;
+}
+
+.offer-card h3 {
+  margin: 14px 0;
+  color: #1a1a1a;
+}
+
+.card-btn {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 8px 18px;
+  background-color: #2563eb;
+  color: white;
+  border-radius: 20px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.card-btn:hover {
+  background-color: #1947ab;
+}
+
+/* Why Choose Section */
+.why-section {
+  background: #f8f9ff;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.why-item {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.why-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}

@@ -1,18 +1,17 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./Home-notlogin/Home";  
-import AnatomixLanding from "./Homepage";
-import QuizGen from "./Quiz/Quiz_gen";
-import QuizPage from "./Quiz/QuizPage";
+import HomePrelogin from "./Home/home-prelogin";
+import HomeLoggedIn from "./Home/home-loggedin";
+import QuizGenerator from "./QuizPage/quiz-generator";
+import Quiz from "./QuizPage/quiz";
 
 function App() {
   return (
    <Router>
       <Routes>
-        <Route path="/" element={<Home />} />  
-
-        <Route path="/home_loggedin" element={<AnatomixLanding/>}/>
-        <Route path="/quiz-gen" element={<QuizGen />} />
-        <Route path="/quiz-page" element={<QuizPage />} />
+        <Route path="/" element={<HomePrelogin />} />
+        <Route path="/home_loggedin" element={<HomeLoggedIn />} />
+        <Route path="/quiz-gen" element={<QuizGenerator />} />
+        <Route path="/quiz-page" element={<Quiz />} />
       </Routes>
     </Router>
   );
