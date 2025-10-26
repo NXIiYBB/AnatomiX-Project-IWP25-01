@@ -1,3 +1,7 @@
+/* ==============================
+   Home Page Styling (Responsive)
+   ============================== */
+
 /* Container หลัก */
 .home-container {
   font-family: "Poppins", sans-serif;
@@ -9,25 +13,32 @@
   font-size: medium;
 }
 
-/* Hero Section */
+/* ==============================
+   Hero Section
+============================== */
 .hero-section {
-  background: url("https://images.unsplash.com/photo-1649073586428-e288125d930a?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") center/cover no-repeat;
+  background: url("https://images.unsplash.com/photo-1649073586428-e288125d930a?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0") center/cover no-repeat;
   color: #fff;
   text-align: center;
   padding: 140px 20px;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-overlay {
   background: rgba(230, 237, 255, 0.85); /* น้ำเงินโปร่งใส */
-  padding: 80px 60px; /* กรอบใหญ่ขึ้นสำหรับ logged-in */
+  padding: 80px 60px;
   border-radius: 20px;
   display: inline-block;
+  max-width: 850px;
+  box-sizing: border-box;
 }
 
 .hero-section h1 {
   color: #1947ab;
-  font-size: 2.6rem; /* ขนาดใหญ่ขึ้นสำหรับ logged-in */
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
   margin-bottom: 16px;
 }
 
@@ -37,9 +48,12 @@
   margin: 0 auto 40px;
   font-weight: bold;
   line-height: 1.8;
+  font-size: clamp(1rem, 2vw, 1.2rem);
 }
 
-/* Offers Section */
+/* ==============================
+   Offers Section
+============================== */
 .offers-section {
   text-align: center;
   padding: 80px 20px;
@@ -57,13 +71,13 @@
   background: #e6edff;
   padding: 30px;
   border-radius: 16px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .offer-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .offer-card .icon {
@@ -92,7 +106,9 @@
   background-color: #1947ab;
 }
 
-/* Why Choose Section */
+/* ==============================
+   Why Choose Section
+============================== */
 .why-section {
   background: #f8f9ff;
   text-align: center;
@@ -110,11 +126,78 @@
   background: #ffffff;
   padding: 24px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .why-item:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ==============================
+   Responsive Design
+============================== */
+
+/* Tablet (≤ 900px) */
+@media (max-width: 900px) {
+  .hero-section {
+    padding: 100px 20px;
+  }
+
+  .hero-overlay {
+    padding: 60px 40px;
+    max-width: 90%;
+  }
+
+  .offers-section,
+  .why-section {
+    padding: 60px 20px;
+  }
+
+  .offer-card,
+  .why-item {
+    padding: 24px;
+  }
+}
+
+/* Mobile (≤ 600px) */
+@media (max-width: 600px) {
+  .hero-section {
+    padding: 80px 16px;
+  }
+
+  .hero-overlay {
+    padding: 40px 20px;
+    border-radius: 16px;
+    width: 100%;
+  }
+
+  .hero-section h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-section p {
+    font-size: 0.95rem;
+  }
+
+  .offer-card {
+    padding: 22px;
+  }
+
+  .card-btn {
+    width: 100%;
+    border-radius: 12px;
+    font-size: 1rem;
+    padding: 10px;
+  }
+
+  .why-section {
+    padding: 50px 16px;
+  }
+
+  .offer-grid,
+  .why-grid {
+    gap: 18px;
+  }
 }

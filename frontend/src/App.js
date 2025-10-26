@@ -9,9 +9,9 @@ function App() {
    <Router>
       <Routes>
         <Route path="/" element={<HomePrelogin />} />
-        <Route path="/home_loggedin" element={<HomeLoggedIn />} />
-        <Route path="/quiz-gen" element={<QuizGenerator />} />
-        <Route path="/quiz-page" element={<Quiz />} />
+        <Route path="/home-loggedin" element={<HomeLoggedIn />} />
+        <Route path="/quiz-generator" element={<QuizGenerator />} />
+        <Route path="/quiz" element={<Quiz />} />
       </Routes>
     </Router>
   );

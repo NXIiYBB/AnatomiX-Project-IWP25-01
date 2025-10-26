@@ -1,16 +1,22 @@
+/* ==============================
+   Home Page Styling (Responsive)
+   ============================== */
+
 .home-container {
   font-family: "Poppins", sans-serif;
-  color: #1a1a1a; /* เปลี่ยนสีตัวอักษรเป็นเข้ม */
-  background-color: #f0f4ff; /* พื้นหลังหลักสีฟ้าอ่อน */
-  margin: 10px 0; /* เผื่อพื้นที่ให้ navbar */
+  color: #1a1a1a;
+  background-color: #f0f4ff;
+  margin: 10px 0;
   padding: 0;
   box-sizing: border-box;
   font-size: medium;
 }
 
-/* Hero Section */
+/* ==============================
+   Hero Section
+============================== */
 .hero-section {
-  background: url("https://images.unsplash.com/photo-1649073586428-e288125d930a?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") center/cover no-repeat;
+  background: url("https://images.unsplash.com/photo-1649073586428-e288125d930a?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0") center/cover no-repeat;
   color: #fff;
   text-align: center;
   padding: 140px 20px;
@@ -22,11 +28,12 @@
   padding: 60px 40px;
   border-radius: 20px;
   display: inline-block;
+  max-width: 800px;
 }
 
 .hero-section h1 {
-  color: #1947ab; /* ตัวอักษรเข้ม */
-  font-size: 2.4rem;
+  color: #1947ab;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
   margin-bottom: 16px;
 }
 
@@ -35,12 +42,15 @@
   max-width: 600px;
   margin: 0 auto 40px;
   font-weight: bold;
-  line-height: 200%;
+  line-height: 1.8;
+  font-size: clamp(1rem, 2vw, 1.1rem);
 }
 
-/* Button Primary */
+/* ==============================
+   Primary Button
+============================== */
 .btn-primary {
-  display: inline-block;
+  display: flexbox;
   background-color: #2563eb;
   color: white;
   padding: 10px 22px;
@@ -50,19 +60,22 @@
   cursor: pointer;
   transition: 0.2s;
   font-weight: bold;
-  text-decoration: none; /* เอาขีดเส้นใต้ */
+  text-decoration: none;
+  
 }
-
 
 .btn-primary:hover {
-  background-color: #2563eb; /* น้ำเงินเข้มกว่า */
+  background-color: #1947ab;
+  text-align: center;
 }
 
-/* Offers Section */
+/* ==============================
+   Offers Section
+============================== */
 .offers-section {
   text-align: center;
   padding: 80px 20px;
-  background-color: #ffffff; /* พื้นหลังขาว */
+  background-color: #ffffff;
 }
 
 .offer-grid {
@@ -73,25 +86,33 @@
 }
 
 .offer-card {
-  background: #e6edff; /* ฟ้าอ่อน */
+  background: #e6edff;
   padding: 30px;
   border-radius: 16px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.offer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .offer-card .icon {
   font-size: 2rem;
-  color: #2563eb; /* น้ำเงินไอคอน */
+  color: #2563eb;
 }
 
 .offer-card h3 {
   margin: 12px 0;
-  color: #1a1a1a; /* ตัวอักษรเข้ม */
+  color: #1a1a1a;
 }
 
-/* Why Choose Section */
+/* ==============================
+   Why Choose Section
+============================== */
 .why-section {
-  background: #f8f9ff; /* ฟ้า very light */
+  background: #f8f9ff;
   text-align: center;
   padding: 80px 20px;
 }
@@ -104,8 +125,81 @@
 }
 
 .why-item {
-  background: #ffffff; /* ขาว */
+  background: #ffffff;
   padding: 24px;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.why-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* ==============================
+   Responsive Design
+============================== */
+
+/* Tablets (<= 900px) */
+@media (max-width: 900px) {
+  .hero-section {
+    padding: 100px 20px;
+  }
+
+  .hero-overlay {
+    padding: 40px 25px;
+  }
+
+  .offers-section,
+  .why-section {
+    padding: 60px 20px;
+  }
+
+  .offer-card,
+  .why-item {
+    padding: 24px;
+  }
+}
+
+/* Mobile (<= 600px) */
+@media (max-width: 600px) {
+  .hero-section {
+    padding: 80px 16px;
+  }
+
+  .hero-overlay {
+    padding: 30px 20px;
+    border-radius: 16px;
+  }
+
+  .hero-section h1 {
+    font-size: 1.6rem;
+  }
+
+  .hero-section p {
+    font-size: 0.95rem;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 12px;
+  }
+
+  .offers-section,
+  .why-section {
+    padding: 50px 16px;
+  }
+
+  .offer-card,
+  .why-item {
+    padding: 20px;
+  }
+
+  .offer-grid,
+  .why-grid {
+    gap: 16px;
+  }
 }
