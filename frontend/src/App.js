@@ -28,10 +28,10 @@ function App() {
                             path="/login"
                             element={isLoggedIn ? <Navigate to="/home" /> : <SignIn setIsLoggedIn={setIsLoggedIn} />}/>
 
-                        <Route path="/home" element={<Home />} />
-                        <Route path="/chat" element={<Chat />} />
-                        <Route path="/quiz" element={<Quiz />} />
-                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
+                        <Route path="/chat" element={isLoggedIn ? <Chat /> : <Navigate to="/login" />} />
+                        <Route path="/quiz" element={isLoggedIn ? <Quiz /> : <Navigate to="/login" />} />
+                        <Route path="/profile" element={isLoggedIn ? <Profile setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/login" />} />
 
                         <Route path="*" element={<Navigate to={isLoggedIn ? "/home" : "/login"} />} />
                     </Routes>
