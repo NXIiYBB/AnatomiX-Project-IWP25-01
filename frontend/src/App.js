@@ -3,6 +3,7 @@ import HomePrelogin from "./Home/home-prelogin";
 import HomeLoggedIn from "./Home/home-loggedin";
 import QuizGenerator from "./QuizPage/quiz-generator";
 import Quiz from "./QuizPage/quiz";
+import Result from "./QuizPage/result";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/home-loggedin" element={<HomeLoggedIn />} />
         <Route path="/quiz-generator" element={<QuizGenerator />} />
         <Route path="/quiz" element={<Quiz />} />
+        <Route path="/quiz-result" element={<Result />} />
       </Routes>
     </Router>
   );

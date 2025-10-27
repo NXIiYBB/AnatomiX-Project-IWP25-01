@@ -14,14 +14,14 @@ export default function Quiz() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
-  const [score, setScore] = useState(null); // ← เก็บคะแนน
 
   useEffect(() => {
     const mockData = {
       Genetic: [
         {
           id: 1,
-          question: "What is the term for a gene that expresses its trait even when only one copy is present in a heterozygous state?",
+          question:
+            "What is the term for a gene that expresses its trait even when only one copy is present in a heterozygous state?",
           options: [
             "Independent gene",
             "Dominant gene",
@@ -64,16 +64,8 @@ export default function Quiz() {
   };
 
   const handleSubmit = () => {
-    let calculatedScore = 0;
-    questions.forEach((q) => {
-      if (answers[q.id] === q.correct) calculatedScore++;
-    });
-    setScore(calculatedScore); // ← แทน alert
-  };
-
-  const handleTryAgain = () => {
-    setAnswers({});
-    setScore(null);
+    // ส่งไปหน้า Result พร้อมข้อมูล questions + answers
+    navigate("/quiz-result", { state: { questions, answers, title } });
   };
 
   const handleBack = () => {
@@ -85,11 +77,15 @@ export default function Quiz() {
   return (
     <div className="quiz-container">
       <h1 className="quiz-title">Quiz: {title}</h1>
-      <p className="quiz-info">Difficulty: {level} | {num} Questions</p>
+      <p className="quiz-info">
+        Difficulty: {level} | {num} Questions
+      </p>
 
       {questions.slice(0, num).map((q) => (
         <div key={q.id} className="quiz-question-card">
-          <h3>{q.id}. {q.question}</h3>
+          <h3>
+            {q.id}. {q.question}
+          </h3>
           <div className="options-group">
             {q.options.map((opt, i) => (
               <label key={i} className="option-label">
@@ -99,7 +95,6 @@ export default function Quiz() {
                   value={opt}
                   checked={answers[q.id] === opt}
                   onChange={() => handleAnswerChange(q.id, opt)}
-                  disabled={score !== null} // ← ปิดแก้ไขหลัง submit
                 />
                 {String.fromCharCode(65 + i)}. {opt}
               </label>
@@ -108,21 +103,14 @@ export default function Quiz() {
         </div>
       ))}
 
-      {score === null ? (
+      <div className="button-group">
         <button className="submit-btn" onClick={handleSubmit}>
           Submit Quiz
         </button>
-      ) : (
-        <div className="score-container">
-          <h2>🎯 You scored {score}/{questions.length}</h2>
-          <button className="try-btn" onClick={handleTryAgain}>
-            Try Again
-          </button>
-          <button className="back-btn" onClick={handleBack}>
-            Back to Quiz Generator
-          </button>
-        </div>
-      )}
+        <button className="back-btn" onClick={handleBack}>
+          Back
+        </button>
+      </div>
     </div>
   );
 }

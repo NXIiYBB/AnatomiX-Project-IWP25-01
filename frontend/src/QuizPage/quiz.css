@@ -3,9 +3,17 @@
 /* =====================
    Base Styles
 ===================== */
+html, body {
+  height: 100%;
+  margin-top: 12%;
+  display: flex;
+  justify-content: center; 
+  align-items: center;    
+  background-color: #f0f2f5;
+}
 .quiz-container {
   max-width: 700px;
-  margin: 60px auto;
+  margin: 200px auto;
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
@@ -88,23 +96,36 @@
 /* =====================
    Buttons
 ===================== */
+.button-group {
+  display: flex;
+  justify-content: center; /* กึ่งกลางแนวนอน */
+  gap: 16px;               /* ระยะห่างระหว่างปุ่ม */
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center; 
+  gap: 16px;              
+  margin-top: 20px;
+  flex-wrap: wrap;        
+}
+
 .submit-btn,
 .try-btn,
 .back-btn {
-  border: none;
+  width: auto;
   padding: 10px 24px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
   font-size: 1rem;
   transition: all 0.2s;
-  margin-top: 15px;
-  margin-right: 10px;
+  border: none;
 }
 
 .submit-btn {
-  display: block;
-  margin: 20px auto 0;
   background-color: #2563eb;
   color: white;
 }
@@ -128,8 +149,23 @@
 }
 
 .back-btn:hover {
-  background-color: #a2b3c6;
+  background-color: #1947ab;
 }
+
+/* Mobile */
+@media (max-width: 600px) {
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .submit-btn,
+  .try-btn,
+  .back-btn {
+    width: 100%;
+    flex: none; /* ไม่ต้องยืดเต็ม */
+  }
+}
+
 
 /* =====================
    Score Container
@@ -214,4 +250,17 @@
   .score-container {
     padding: 16px;
   }
+}
+.correct {
+  border-left: 4px solid green;
+  padding-left: 10px;
+  margin-bottom: 15px;
+  background-color: #f0fff0;
+}
+
+.wrong {
+  border-left: 4px solid red;
+  padding-left: 10px;
+  margin-bottom: 15px;
+  background-color: #fff0f0;
 }
