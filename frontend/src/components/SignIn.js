@@ -39,7 +39,7 @@ function SignIn({ setIsLoggedIn }) {
         // เก็บ token ไว้ถ้ามี
         // localStorage.setItem("token", data.token);
 
-        navigate("/home");
+        navigate("/home-loggedin");
       } else {
         console.log("❌ Sign In failed: " + (data.error || "Unknown error"));
       }

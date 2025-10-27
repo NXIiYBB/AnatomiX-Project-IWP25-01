@@ -1,0 +1,142 @@
+.quiz-generator-container {
+  max-width: 700px;
+  margin: 60px auto;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  padding: 40px 50px;
+  font-family: "Poppins", sans-serif;
+  color: #1a1a1a;
+  box-sizing: border-box;
+}
+
+.quiz-generator-container h2 {
+  color: #1947ab;
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.quiz-generator-container p {
+  color: #4b5563;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.form-group select,
+.form-group input {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  border-color: #2563eb;
+}
+
+.switch-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+button {
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  width: auto;
+  min-width: 120px;
+}
+
+#generate-btn {
+  background-color: #2563eb;
+  color: white;
+  font-size: large;
+}
+
+#generate-btn:hover {
+  background-color: #1947ab;
+}
+
+#reset-btn {
+  background-color: #e6edff;
+  color: #1a1a1a;
+  font-size: large;
+}
+
+#reset-btn:hover {
+  background-color: #cdd8ff;
+}
+
+/* Tablet screens */
+@media (max-width: 900px) {
+  .quiz-generator-container {
+    padding: 30px 35px;
+    margin: 40px 20px;
+  }
+
+  .quiz-generator-container h2 {
+    font-size: 1.6rem;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 600px) {
+  .quiz-generator-container {
+    padding: 20px 16px;
+    margin: 30px 10px;
+    border-radius: 12px;
+  }
+
+  .quiz-generator-container h2 {
+    font-size: 1.4rem;
+  }
+
+  .quiz-generator-container p {
+    font-size: 0.95rem;
+  }
+
+  button {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .switch-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

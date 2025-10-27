@@ -17,13 +17,13 @@ function Navbar() {
             <nav className="menu-container">
                 <ul className="menu--list">
                     <li>
-                        <Link to="/home" className="item"><BiHome className="icon" />Home</Link>
+                        <Link to="/home-loggedin" className="item"><BiHome className="icon" />Home</Link>
                     </li>
                     <li>
                         <Link to="/chat" className="item"><BiMessage className="icon" />ChatBot</Link>
                     </li>
                     <li>
-                        <Link to="/quiz" className="item"><VscLightbulbSparkle className="icon" />Quiz</Link>
+                        <Link to="/quiz-generator" className="item"><VscLightbulbSparkle className="icon" />Quiz</Link>
                     </li>
                     <li>
                         <Link to="/profile" className="item"><BsPersonCircle className="icon" />Profile</Link>
