@@ -3,10 +3,11 @@ import "./Homepage.css";
 import FeatureCard from "./featurecard";
 import physioimg from "../pics/physio3.png";
 import Navbar from '../components/navbar';
+import { Link } from "react-router-dom";
 
 export default function AnatomixLanding() {
   return (
-    <div className="container">
+    <div>
       <Navbar />
       {/* Hero Section */}
       <section className="hero">
@@ -20,8 +21,8 @@ export default function AnatomixLanding() {
             diagrams, and a quiz generation tool.
           </p>
           <div className="hero-buttons">
-            <button className="primary-btn">Start Learning Now</button>
-            <button className="secondary-btn">Explore Resources</button>
+            <button className="primary-btn"><Link to="/chat" className="item1">Start Learning Now</Link></button>
+            {/* <button className="secondary-btn">Explore Resources</button> */}
           </div>
         </div>
         <img src={physioimg} alt="Physiology" className="hero-img" />
@@ -56,7 +57,7 @@ export default function AnatomixLanding() {
       <footer>
         <h2>Ready to Master Physiology?</h2>
         <p>Join thousands of students who are already excelling with Anatomix.</p>
-        <button className="primary-btn">Start Your Journey Now</button>
+        <button className="primary-btn"><Link to="/quiz-gen" className="item1">Start Your Journey Now</Link></button>
       </footer>
     </div>
   );

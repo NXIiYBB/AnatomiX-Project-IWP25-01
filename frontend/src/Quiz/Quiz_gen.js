@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Quiz_gen.css";
+import Navbar from '../components/navbar';
 
 export default function QuizGen() {
   const [form, setForm] = useState({
@@ -12,9 +13,15 @@ export default function QuizGen() {
   const navigate = useNavigate();
 
   const topics = [
-    "Cellular biology","Nervous system","Renal","Genetic","Digestive",
-    "Endocrine","Respiratory","Cardiovascular","Musculoskeletal",
-    "Immune system","Reproductive",
+    "ระบบไหลเวียนเลือด",
+    "ระบบทางเดินหายใจ",
+    "ระบบย่อยอาหาร",
+    "ระบบประสาท",
+    "ระบบกล้ามเนื้อและโครงร่าง",
+    "ระบบขับถ่าย/ปัสสาวะ",
+    "ระบบต่อมไร้ท่อ",
+    "สุ่ม 1 ระบบ",
+    "รวมทุกระบบในร่างกาย"
   ];
   const numbers = [10, 20, 30];
   const difficulties = ["Easy", "Medium", "Hard"];
@@ -34,6 +41,7 @@ export default function QuizGen() {
 
   return (
     <div className="quiz-container">
+      <Navbar />
       <div className="quiz-card">
         {!generated ? (
           <>

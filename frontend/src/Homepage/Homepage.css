@@ -7,18 +7,19 @@ body {
 }
 
 .container {
-  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
+  /* padding: 0 20px; */
 }
 
 /* Hero Section */
 .hero {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 40px;
-  margin: 60px 0;       /* เพิ่ม margin บน/ล่าง */
+  margin: 60px 0px;       /* เพิ่ม margin บน/ล่าง */
   padding: 60px 40px;   /* เพิ่ม padding ทำให้ section สูงขึ้น */
   background: #eff6ff;
   border-radius: 12px;
@@ -62,6 +63,14 @@ body {
   font-size: large;
 }
 
+.item1 {
+  text-decoration: none;
+  color: #fff;
+}
+.item2 {
+  text-decoration: none;
+  color: #2563eb;
+}
 .secondary-btn {
   border: 1px solid #2563eb;
   background: #fff;
