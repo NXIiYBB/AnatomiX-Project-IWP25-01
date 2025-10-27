@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from 'react';
 import { BiSolidCommentAdd } from 'react-icons/bi';
 import Navbar from './navbar';
 import { auth } from "../firebase";
+import Swal from 'sweetalert2';
 
 function Chat() {
 	const [topic, setTopic] = useState('');
@@ -15,49 +16,49 @@ function Chat() {
 	const [inputMessage, setInputMessage] = useState('');
 	const [chatHistory, setChatHistory] = useState([]);
 	// const [activeMenu, setActiveMenu] = useState('chat');
-  const [selectedConversationId, setSelectedConversationId] = useState(null);
+	const [selectedConversationId, setSelectedConversationId] = useState(null);
 	const messagesEndRef = useRef(null);
-  const [message, setMessage] = useState([]);
+	const [message, setMessage] = useState([]);
 
-  const uid = auth.currentUser?.uid;
+	const uid = auth.currentUser?.uid;
 
-  // ดึง conversation list
-  useEffect(() => {
-    if (!uid) return;
+	// ดึง conversation list
+	useEffect(() => {
+		if (!uid) return;
 
-    const fetchConversations = async () => {
-      try {
-        const res = await fetch(
-          `http://localhost:5001/anatomix-c8c63/us-central1/api/chat/historyList?uid=${uid}`
-        );
-        const data = await res.json();
-        setChatHistory(data.res); // data.res ต้องมี id + title
-      } catch (err) {
-        console.error("Error fetching conversations:", err);
-      }
-    };
+		const fetchConversations = async () => {
+			try {
+				const res = await fetch(
+					`http://localhost:5001/anatomix-c8c63/us-central1/api/chat/historyList?uid=${uid}`
+				);
+				const data = await res.json();
+				setChatHistory(data.res); // data.res ต้องมี id + title
+			} catch (err) {
+				console.error("Error fetching conversations:", err);
+			}
+		};
 
-    fetchConversations();
-  }, [uid]);
+		fetchConversations();
+	}, [uid]);
 
-  // ดึง messages เมื่อเลือก conversation
-  useEffect(() => {
-    if (!selectedConversationId) return;
+	// ดึง messages เมื่อเลือก conversation
+	useEffect(() => {
+		if (!selectedConversationId) return;
 
-    const fetchMessages = async () => {
-      try {
-        const res = await fetch(
-          `http://localhost:5001/anatomix-c8c63/us-central1/api/chat/history?uid=${uid}&conversationId=${selectedConversationId}`
-        );
-        const data = await res.json();
-        setMessages(data.res); // สมมติ API return array of {role, text, createdAt}
-      } catch (err) {
-        console.error("Error fetching messages:", err);
-      }
-    };
+		const fetchMessages = async () => {
+			try {
+				const res = await fetch(
+					`http://localhost:5001/anatomix-c8c63/us-central1/api/chat/history?uid=${uid}&conversationId=${selectedConversationId}`
+				);
+				const data = await res.json();
+				setMessages(data.res); // สมมติ API return array of {role, text, createdAt}
+			} catch (err) {
+				console.error("Error fetching messages:", err);
+			}
+		};
 
-    fetchMessages();
-  }, [selectedConversationId, uid]);
+		fetchMessages();
+	}, [selectedConversationId, uid]);
 
 	// Auto scroll to bottom of chat
 	const scrollToBottom = () => {
@@ -69,101 +70,101 @@ function Chat() {
 	}, [messages]);
 
 	// Handle topic submission
-	const handleTopicSubmit = async(e) => {
+	const handleTopicSubmit = async (e) => {
 		e.preventDefault();
 		if (!topic.trim()) return;
 
-  try {
-    const res = await fetch("http://localhost:5001/anatomix-c8c63/us-central1/api/chat/newConversation", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            uid,            // user id ปัจจุบัน
-            title: topic // ชื่อหัวข้อ (topic)
-          }),
-        });
+		try {
+			const res = await fetch("http://localhost:5001/anatomix-c8c63/us-central1/api/chat/newConversation", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					uid,            // user id ปัจจุบัน
+					title: topic // ชื่อหัวข้อ (topic)
+				}),
+			});
 
-        if (!res.ok) {
-          throw new Error("Failed to create conversation");
-        }
+			if (!res.ok) {
+				throw new Error("Failed to create conversation");
+			}
 
-        const data = await res.json();
-        setMessages([
-         {
-            id: 123456,
-            text: `Hello! I'm ready to talk with you about "${topic}". Do you have anything you'd like to ask?`,
-            role: 'model',
-            timestamp: new Date().toLocaleTimeString()
-          }
-        ]);
+			const data = await res.json();
+			setMessages([
+				{
+					id: 123456,
+					text: `Hello! I'm ready to talk with you about "${topic}". Do you have anything you'd like to ask?`,
+					role: 'model',
+					timestamp: new Date().toLocaleTimeString()
+				}
+			]);
 
-        // สมมติ backend ส่งกลับ { conversationId, title, createdAt, updatedAt }
-        const newConversation = {
-          id: data.conversationId,
-          title: data.title,
-          createdAt: data.createdAt,
-          updatedAt: data.updatedAt,
-        };
+			// สมมติ backend ส่งกลับ { conversationId, title, createdAt, updatedAt }
+			const newConversation = {
+				id: data.conversationId,
+				title: data.title,
+				createdAt: data.createdAt,
+				updatedAt: data.updatedAt,
+			};
 
-        // อัปเดต state ให้แสดงหัวข้อใหม่ใน history
-        setChatHistory((prev) => [newConversation, ...prev]);
+			// อัปเดต state ให้แสดงหัวข้อใหม่ใน history
+			setChatHistory((prev) => [newConversation, ...prev]);
 
-        // เซ็ต topic และ conversationId ปัจจุบัน
-        setTopic(newConversation.title);
-        setSelectedConversationId(newConversation.id);
+			// เซ็ต topic และ conversationId ปัจจุบัน
+			setTopic(newConversation.title);
+			setSelectedConversationId(newConversation.id);
 
-        // ปิด modal
-        setShowTopicInput(false);
+			// ปิด modal
+			setShowTopicInput(false);
 
-      } catch (err) {
-        console.error("Error creating conversation:", err);
-      }
+		} catch (err) {
+			console.error("Error creating conversation:", err);
+		}
 	};
 
 	// Handle message submission
 	const handleMessageSubmit = async (e) => {
-    e.preventDefault();
+		e.preventDefault();
 
-    if (!inputMessage.trim()) return; // กัน empty message
-    const userMessage = inputMessage; // เก็บค่าปัจจุบัน
-    setInputMessage("");
+		if (!inputMessage.trim()) return; // กัน empty message
+		const userMessage = inputMessage; // เก็บค่าปัจจุบัน
+		setInputMessage("");
 
-    // แสดงข้อความผู้ใช้ในหน้าจอทันที
-    setMessages((prev) => [...prev, { text: userMessage, role: "user" }]);
+		// แสดงข้อความผู้ใช้ในหน้าจอทันที
+		setMessages((prev) => [...prev, { text: userMessage, role: "user" }]);
 
-    try {
-      const response = await fetch(
-        "http://localhost:5001/anatomix-c8c63/us-central1/api/chat",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            uid,
-            conversationId: selectedConversationId,
-            text: userMessage,
-          }),
-        }
-      );
+		try {
+			const response = await fetch(
+				"http://localhost:5001/anatomix-c8c63/us-central1/api/chat",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						uid,
+						conversationId: selectedConversationId,
+						text: userMessage,
+					}),
+				}
+			);
 
-      if (!response.ok) {
-        throw new Error("❌ Failed to send message");
-      }
+			if (!response.ok) {
+				throw new Error("❌ Failed to send message");
+			}
 
-      const data = await response.json();
+			const data = await response.json();
 
-      // สมมติ response เป็น { res: message }
-      console.log(data.response);
-      setMessages((prev) => [...prev, data.response]);
+			// สมมติ response เป็น { res: message }
+			console.log(data.response);
+			setMessages((prev) => [...prev, data.response]);
 
-      // clear input
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
+			// clear input
+		} catch (error) {
+			console.error("Error sending message:", error);
+		}
+	};
 
 	// Start new chat
 	const startNewChat = () => {
@@ -171,6 +172,15 @@ function Chat() {
 		setShowTopicInput(true);
 		setMessages([]);
 		setInputMessage('');
+	};
+
+	const handleGenerateQuiz = async (e) => {
+		e.preventDefault();
+		Swal.fire({
+			icon: 'success',
+			title: 'Quiz generated',
+			confirmButtonColor: '#0256f2'
+		});
 	};
 
 	// Navigation items
@@ -198,11 +208,11 @@ function Chat() {
 					{/* Topic Display */}
 					<div className="topic-display">
 						<h3>{
-              chatHistory.find((chat) => chat.id === selectedConversationId)?.title 
-              || "เลือกบทสนทนา"
-            }</h3>
+							chatHistory.find((chat) => chat.id === selectedConversationId)?.title
+							|| "Select Topic"
+						}</h3>
 					</div>
-					
+
 
 					{/* Topic Input Modal */}
 					{showTopicInput && (
@@ -252,7 +262,10 @@ function Chat() {
 										placeholder="Type a new message here"
 										className="message-input"
 									/>
-									<button type="submit" className="send-btn">Send</button>
+									<div className='button-group'>
+										<button type="submit" className="send-btn">Send</button>
+										<button type='button' className='quiz-btn' onClick={handleGenerateQuiz}>Generate Quiz</button>
+									</div>
 								</div>
 							</form>
 						</>
@@ -273,11 +286,11 @@ function Chat() {
 							</div>
 						) : (
 							chatHistory.map((conv) => (
-								<div 
-                key={conv.id}
-                className={"history-item"}
-                onClick={() => setSelectedConversationId(conv.id)}
-                >
+								<div
+									key={conv.id}
+									className={"history-item"}
+									onClick={() => setSelectedConversationId(conv.id)}
+								>
 									<div className="history-topic" onClick={() => setTopic(conv.title)}>
 										<h4>{conv.title}</h4>
 									</div>
