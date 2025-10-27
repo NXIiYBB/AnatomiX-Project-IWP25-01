@@ -38,15 +38,6 @@ export default function HomePrelogin() {
             </div>
 
             <div className="offer-card">
-              <i className="icon">🧠</i>
-              <h3>Interactive Diagrams</h3>
-              <p>
-                Explore animated anatomy and physiology processes through engaging,
-                zoomable diagrams with detailed explanations.
-              </p>
-            </div>
-
-            <div className="offer-card">
               <i className="icon">📝</i>
               <h3>Quiz Generator</h3>
               <p>
