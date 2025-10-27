@@ -1,13 +1,10 @@
-html, body {
-  height: 100%;
-  margin: 0;
-  display: flex;
-  justify-content: center; 
-  align-items: center;    
-  background-color: #f0f2f5;
-}
+
 
 .quiz-generator-container {
+  display: block;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f2f5;
   max-width: 900px;
   margin: 0;
   background: #ffffff;
