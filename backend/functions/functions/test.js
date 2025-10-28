@@ -1,7 +1,7 @@
 const { error } = require("firebase-functions/logger");
 const { auth, db } = require("./firebase");
 const { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } = require("firebase/auth");
-const { collection, setDoc, getDocs, doc } = require("firebase/firestore");
+const { collection, setDoc, getDocs, doc, serverTimestamp } = require("firebase/firestore");
 
 // email, password, username
 /**
@@ -34,6 +34,15 @@ async function signUp(req, res) {
             await setDoc(userRef, {
             username: req.body.username,
             email: req.body.email,
+            });
+
+            const conversationsRef = collection(userRef, "conversations");
+            const conversationRef = doc(conversationsRef);
+            
+            await setDoc(conversationRef, {
+                title: `Chat with ${req.body.username}`,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp(),
             });
         } catch (error) {
             res.status(400).json("❌ Error creating user:", error);
@@ -68,7 +77,7 @@ async function logIn(req, res, next) {
         return;
       }
 
-      res.json({message: "Login successful!"});
+      res.json({message: "Login successful!", uid: user.uid});
       next();
     } catch (error) {
       res.status(400).json({error: error});

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./quiz.css";
+import { auth } from "../firebase";
 
 export default function Quiz() {
   const location = useLocation();
   const navigate = useNavigate();
   const query = new URLSearchParams(location.search);
+  const uid = auth.currentUser?.uid;
 
   const title = query.get("title") || "Quiz";
   const num = parseInt(query.get("num")) || 5;
@@ -14,50 +16,7 @@ export default function Quiz() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
-  const [score, setScore] = useState(null); // ← เก็บคะแนน
-
-  // useEffect(() => {
-  //   const mockData = {
-  //     Genetic: [
-  //       {
-  //         id: 1,
-  //         question: "What is the term for a gene that expresses its trait even when only one copy is present in a heterozygous state?",
-  //         options: [
-  //           "Independent gene",
-  //           "Dominant gene",
-  //           "Recessive gene",
-  //           "Sex-linked gene",
-  //         ],
-  //         correct: "Dominant gene",
-  //       },
-  //       {
-  //         id: 2,
-  //         question: "What process copies genetic information from DNA to mRNA?",
-  //         options: ["DNA replication", "Mutation", "Translation", "Transcription"],
-  //         correct: "Transcription",
-  //       },
-  //     ],
-  //     Digestive: [
-  //       {
-  //         id: 1,
-  //         question: "Which organ is primarily responsible for nutrient absorption?",
-  //         options: ["Stomach", "Small intestine", "Liver", "Large intestine"],
-  //         correct: "Small intestine",
-  //       },
-  //       {
-  //         id: 2,
-  //         question: "What enzyme breaks down starch into sugars?",
-  //         options: ["Amylase", "Lipase", "Pepsin", "Trypsin"],
-  //         correct: "Amylase",
-  //       },
-  //     ],
-  //   };
-
-  //   setTimeout(() => {
-  //     setQuestions(mockData[title] || []);
-  //     setLoading(false);
-  //   }, 500);
-  // }, [title]);
+  const [score, setScore] = useState(null);
 
   useEffect(() => {
     if (num && title && level) {
@@ -73,6 +32,7 @@ export default function Quiz() {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
+                uid,
                 systems: title,       // เช่น ["ระบบประสาท", "ระบบไหลเวียนเลือด"]
                 numQuestions: num,   // จำนวนคำถาม
                 difficulty: level, // เช่น "easy", "medium", "hard"

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 // import { HiMail } from 'react-icons/hi';
 // import { MdPassword } from 'react-icons/md';
 
-function SignIn({ setIsLoggedIn }) {
+function SignIn({ setIsLoggedIn, setUid }) {
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -35,6 +35,7 @@ function SignIn({ setIsLoggedIn }) {
       if (res.ok) {
         console.log("✅ Sign In success: " + JSON.stringify(data));
         setIsLoggedIn(true);
+        setUid(JSON.stringify(data.uid));
 
         // เก็บ token ไว้ถ้ามี
         // localStorage.setItem("token", data.token);

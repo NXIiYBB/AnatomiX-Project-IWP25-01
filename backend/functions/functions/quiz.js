@@ -12,7 +12,7 @@ const { doc, collection, writeBatch, serverTimestamp, setDoc } = require("fireba
  */
 async function createQuiz(req, res) {
     try {
-    const { systems, numQuestions, difficulty } = req.body;
+    const { uid, systems, numQuestions, difficulty } = req.body;
 
     // สร้าง prompt สำหรับ AI ให้ output เป็น Multiple Choice JSON
     // const prompt = `
@@ -40,7 +40,7 @@ async function createQuiz(req, res) {
     จำนวนคำถาม: ${numQuestions}
     ระดับความยาก: ${difficulty}
 
-    แต่ละคำถามต้องเป็นแบบปรนัย มีตัวเลือก 4 ข้อ (A-D)
+    แต่ละคำถามต้องเป็นแบบปรนัย มีตัวเลือก 4 ข้อ
     ส่งออกผลลัพธ์เป็น JSON array ของ object ตามรูปแบบนี้เท่านั้น:
     [
     {
@@ -71,7 +71,7 @@ async function createQuiz(req, res) {
     }
 
     // สร้าง quizId (doc อัตโนมัติ)
-    const quizRef = doc(collection(db, "quizzes"));
+    const quizRef = doc(collection(db, "users", uid, "quizzes"));
 
     await setDoc(quizRef, {
     systems,
@@ -108,7 +108,7 @@ async function addQuizResult(req, res) {
   try {
     const { quizId, userId, answers } = req.body;
 
-    const quizRef = db.collection("quizzes").doc(quizId);
+    const quizRef = db.collection("users", uid, "quizzes").doc(quizId);
     const questionsSnap = await quizRef.collection("questions").get();
 
     const batch = db.batch();

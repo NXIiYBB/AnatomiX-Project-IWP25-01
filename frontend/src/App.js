@@ -18,6 +18,7 @@ import SignIn from './components/SignIn';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [uid, setUid] = useState(null);
 
     return (
         // <Chat />
@@ -32,10 +33,10 @@ function App() {
                         <Route path="/" element={<HomePrelogin />} />
                         <Route
                             path="/login"
-                            element={isLoggedIn ? <Navigate to="/home-loggedin" /> : <SignIn setIsLoggedIn={setIsLoggedIn} />}/>
+                            element={isLoggedIn ? <Navigate to="/home-loggedin" /> : <SignIn setIsLoggedIn={setIsLoggedIn} setUid={setUid} />}/>
 
                         {/* <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} /> */}
-                        <Route path="/chat" element={isLoggedIn ? <Chat /> : <Navigate to="/" />} />
+                        <Route path="/chat" element={isLoggedIn ? <Chat uid={uid} /> : <Navigate to="/" />} />
                         {/* <Route path="/quiz" element={isLoggedIn ? <Quiz /> : <Navigate to="/login" />} /> */}
                         <Route path="/profile" element={isLoggedIn ? <Profile setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/" />} />
                         <Route path="/home-loggedin" element={isLoggedIn ? <HomeLoggedIn /> : <Navigate to="/" />} />

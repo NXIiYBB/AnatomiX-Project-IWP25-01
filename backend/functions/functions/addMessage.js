@@ -108,22 +108,24 @@ async function getConversationHistory(req, res) {
  * @return {void}
  */
 async function getConversationList(req, res) {
-  try {const {uid} = req.query;
+  try {const {uid} = req.body.uid;
+  console.log(req.body.uid);
   const messagesRef = collection(
     db,
     "users",
-    uid,
+    req.body.uid,
     "conversations"
   );
 
   const q = query(messagesRef, orderBy("createdAt", "asc"));
   const snapshot = await getDocs(q);
-
+ 
+  console.log(snapshot);
   const conversations = snapshot.docs.map(doc => ({
     id: doc.id,    
     ...doc.data(), 
   }));
-
+  console.log(conversations);
   res.json({ res: conversations });
 } catch (error) {
   res.status(400).json({error: "❌ Error get conversation history:" + error.message});

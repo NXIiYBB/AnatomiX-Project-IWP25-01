@@ -7,8 +7,9 @@ import { useState, useEffect, useRef } from 'react';
 import { BiSolidCommentAdd } from 'react-icons/bi';
 import Navbar from './navbar';
 import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
-function Chat() {
+function Chat({uid}) {
 	const [topic, setTopic] = useState('');
 	const [showTopicInput, setShowTopicInput] = useState(false);
 	const [messages, setMessages] = useState([]);
@@ -19,19 +20,40 @@ function Chat() {
 	const messagesEndRef = useRef(null);
   const [message, setMessage] = useState([]);
 
-  const uid = auth.currentUser?.uid;
+//   const uid = auth.currentUser?.uid;
+	// const [uid, setUid] = useState(null);
 
+//   useEffect(() => {
+//     const unsubscribe = onAuthStateChanged(auth, (user) => {
+//       if (user) {
+//         console.log("✅ Logged in user:", user.uid);
+//         setUid(user.uid);
+//       } else {
+//         console.log("⚠️ No user logged in");
+//         setUid(null);
+//       }
+//     });
+// 	return () => unsubscribe();
+//   }, []);
   // ดึง conversation list
   useEffect(() => {
+	console.log(uid);
     if (!uid) return;
 
     const fetchConversations = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5001/anatomix-c8c63/us-central1/api/chat/historyList?uid=${uid}`
-        );
+          `http://localhost:5001/anatomix-c8c63/us-central1/api/chat/historyList`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({uid}),
+	  });
+	  console.log(uid);
         const data = await res.json();
-        setChatHistory(data.res); // data.res ต้องมี id + title
+        setChatHistory(data.res);
+		console.log(data); // data.res ต้องมี id + title
       } catch (err) {
         console.error("Error fetching conversations:", err);
       }
