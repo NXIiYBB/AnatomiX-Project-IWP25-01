@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/NXIiYBB/AnatomiX-Project-IWP25-01#readme",
   "dependencies": {
+    "@google/genai": "^1.27.0",
+    "firebase-functions": "^6.6.0",
     "react-scripts": "^5.0.1"
   }
 }
