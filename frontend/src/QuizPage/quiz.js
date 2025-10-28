@@ -96,23 +96,14 @@ export default function Quiz() {
 
       fetchQuestions();
     }
-  });
+  }, [num]);
 
   const handleAnswerChange = (id, opt) => {
     setAnswers((prev) => ({ ...prev, [id]: opt }));
   };
 
   const handleSubmit = () => {
-    let calculatedScore = 0;
-    questions.forEach((q, index) => {
-      if (answers[index] === q.answer) calculatedScore++;
-    });
-    setScore(calculatedScore); // ← แทน alert
-  };
-
-  const handleTryAgain = () => {
-    setAnswers({});
-    setScore(null);
+    navigate("/quiz-result", { state: { questions, answers, title } });
   };
 
   const handleBack = () => {
@@ -124,7 +115,9 @@ export default function Quiz() {
   return (
     <div className="quiz-container">
       <h1 className="quiz-title">Quiz: {title}</h1>
-      <p className="quiz-info">Difficulty: {level} | {num} Questions</p>
+      <p className="quiz-info">
+        Difficulty: {level} | {num} Questions
+      </p>
 
       {questions.map((q, index) => (
         <div key={index} className="quiz-question-card">
@@ -147,21 +140,14 @@ export default function Quiz() {
         </div>
       ))}
 
-      {score === null ? (
+      <div className="button-group">
         <button className="submit-btn" onClick={handleSubmit}>
           Submit Quiz
         </button>
-      ) : (
-        <div className="score-container">
-          <h2>🎯 You scored {score}/{questions.length}</h2>
-          <button className="try-btn" onClick={handleTryAgain}>
-            Try Again
-          </button>
-          <button className="back-btn" onClick={handleBack}>
-            Back to Quiz Generator
-          </button>
-        </div>
-      )}
+        <button className="back-btn" onClick={handleBack}>
+          Back
+        </button>
+      </div>
     </div>
   );
 }

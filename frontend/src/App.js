@@ -2,6 +2,7 @@ import HomePrelogin from "./Home/home-prelogin";
 import HomeLoggedIn from "./Home/home-loggedin";
 import QuizGenerator from "./QuizPage/quiz-generator";
 import Quiz from "./QuizPage/quiz";
+import Result from "./QuizPage/result";
 // import logo from './logo.svg';
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
@@ -28,19 +29,20 @@ function App() {
 
                 <div style={{ flex: 1 }}>
                     <Routes>
+                        <Route path="/" element={<HomePrelogin />} />
                         <Route
                             path="/login"
                             element={isLoggedIn ? <Navigate to="/home-loggedin" /> : <SignIn setIsLoggedIn={setIsLoggedIn} />}/>
 
                         {/* <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} /> */}
-                        <Route path="/chat" element={isLoggedIn ? <Chat /> : <Navigate to="/login" />} />
+                        <Route path="/chat" element={isLoggedIn ? <Chat /> : <Navigate to="/" />} />
                         {/* <Route path="/quiz" element={isLoggedIn ? <Quiz /> : <Navigate to="/login" />} /> */}
-                        <Route path="/profile" element={isLoggedIn ? <Profile setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/login" />} />
-                        <Route path="/" element={isLoggedIn ? <HomePrelogin /> : <Navigate to="/login" />} />
-                        <Route path="/home-loggedin" element={isLoggedIn ? <HomeLoggedIn /> : <Navigate to="/login" />} />
-                        <Route path="/quiz-generator" element={isLoggedIn ? <QuizGenerator /> : <Navigate to="/login" />} />
-                        <Route path="/quiz" element={isLoggedIn ? <Quiz /> : <Navigate to="/login" />} />
-                        <Route path="*" element={<Navigate to={isLoggedIn ? "/home" : "/login"} />} />
+                        <Route path="/profile" element={isLoggedIn ? <Profile setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/" />} />
+                        <Route path="/home-loggedin" element={isLoggedIn ? <HomeLoggedIn /> : <Navigate to="/" />} />
+                        <Route path="/quiz-generator" element={isLoggedIn ? <QuizGenerator /> : <Navigate to="/" />} />
+                        <Route path="/quiz" element={isLoggedIn ? <Quiz /> : <Navigate to="/" />} />
+                        <Route path="/quiz-result" element={isLoggedIn ? <Result /> : <Navigate to="/" />} />
+                        <Route path="*" element={<Navigate to={isLoggedIn ? "/home" : "/"} />} />
                     </Routes>
                 </div>
             </div>

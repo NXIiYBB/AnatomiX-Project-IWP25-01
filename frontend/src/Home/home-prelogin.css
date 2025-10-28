@@ -99,6 +99,7 @@
 }
 
 .offer-card .icon {
+  font-style: normal;
   font-size: 2rem;
   color: #2563eb;
 }

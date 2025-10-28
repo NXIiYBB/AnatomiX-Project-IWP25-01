@@ -17,7 +17,7 @@ export default function HomePrelogin() {
               AnatomiX is your ultimate interactive learning platform designed to make
               complex physiology concepts easy to understand for high school students.
             </p>
-            <Link to="/home-loggedin" className="btn-primary">
+            <Link to="/login" className="btn-primary">
             Start Learning Today
             </Link>
           </div>
