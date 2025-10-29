@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 // import { BiHome, BiBookAlt, BiMessage } from 'react-icons/bi';
 // import { VscLightbulbSparkle } from 'react-icons/vsc';
 // import { BsPersonCircle } from 'react-icons/bs';
-import { BiSolidCommentAdd } from 'react-icons/bi';
+// import { BiSolidCommentAdd } from 'react-icons/bi';
 import Navbar from './navbar';
 import { auth } from "../firebase";
 import Swal from 'sweetalert2';
@@ -18,7 +18,13 @@ function Chat() {
 	// const [activeMenu, setActiveMenu] = useState('chat');
 	const [selectedConversationId, setSelectedConversationId] = useState(null);
 	const messagesEndRef = useRef(null);
-	const [message, setMessage] = useState([]);
+	// const [message, setMessage] = useState([]);
+
+	// ตรวจสอบขนาดหน้าจอ
+	// const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+	// const [mobileSelectingTopic, setMobileSelectingTopic] = useState(isMobile);
+	// เริ่มต้น true = mobile แสดง Sidebar ก่อน
+
 
 	const uid = auth.currentUser?.uid;
 
@@ -169,9 +175,11 @@ function Chat() {
 	// Start new chat
 	const startNewChat = () => {
 		setTopic('');
-		setShowTopicInput(true);
+		// setShowTopicInput(true);
 		setMessages([]);
 		setInputMessage('');
+		setShowTopicInput(true);
+
 	};
 
 	const handleGenerateQuiz = async (e) => {
@@ -182,6 +190,13 @@ function Chat() {
 			confirmButtonColor: '#0256f2'
 		});
 	};
+
+	// useEffect(() => {
+	// 	const handleResize = () => setIsMobile(window.innerWidth <= 768);
+	// 	window.addEventListener('resize', handleResize);
+	// 	return () => window.removeEventListener('resize', handleResize);
+	// }, []);
+
 
 	// Navigation items
 	// const navItems = [
@@ -200,10 +215,6 @@ function Chat() {
 
 				{/* Center Chat Area */}
 				<div className="chat-area">
-					{/* <div className="header-title">
-						<h1>AI ChatBot</h1>
-					</div> */}
-
 
 					{/* Topic Display */}
 					<div className="topic-display">
@@ -212,30 +223,6 @@ function Chat() {
 							|| "Select Topic"
 						}</h3>
 					</div>
-
-
-					{/* Topic Input Modal */}
-					{showTopicInput && (
-						<div className="topic-modal">
-							<div className="topic-modal-content">
-								<h2>Start Learning!</h2>
-								<p>What would you like to ask or talk about?</p>
-								<form onSubmit={handleTopicSubmit}>
-									<input
-										type="text"
-										value={topic}
-										onChange={(e) => setTopic(e.target.value)}
-										// placeholder="เช่น การทำอาหาร, เทคโนโลยี, การศึกษา..."
-										className="topic-input"
-										autoFocus
-									/>
-									<button type="submit" className="topic-submit-btn">
-										Start
-									</button>
-								</form>
-							</div>
-						</div>
-					)}
 
 					{/* Chat Messages */}
 					{!showTopicInput && (
@@ -272,12 +259,11 @@ function Chat() {
 					)}
 				</div>
 
-				{/* Right History Sidebar */}
 				<div className="right-sidebar">
 					<div className="sidebar-header">
 						<h3>Chat history</h3>
 						<button className="new-chat-btn" onClick={startNewChat}>
-							<span><BiSolidCommentAdd /></span> Create New Topic</button>
+							<span>🗯️</span> Create New Topic</button>
 					</div>
 					<div className="history-list">
 						{chatHistory.length === 0 ? (
@@ -299,6 +285,35 @@ function Chat() {
 						)}
 					</div>
 				</div>
+
+				{showTopicInput && (
+					<div className="topic-modal">
+						<div className="topic-modal-content">
+							<button
+								className="close-btn"
+								onClick={() => setShowTopicInput(false)}
+							>
+								✕
+							</button>
+							<h2>Start Learning!</h2>
+							<p>What would you like to ask or talk about?</p>
+							<form onSubmit={handleTopicSubmit}>
+
+								<input
+									type="text"
+									value={topic}
+									onChange={(e) => setTopic(e.target.value)}
+									className="topic-input"
+									autoFocus
+								/>
+								<button type="submit" className="topic-submit-btn">
+									Start
+								</button>
+							</form>
+						</div>
+					</div>
+				)}
+
 			</div>
 		</div>
 	);

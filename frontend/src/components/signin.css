@@ -223,3 +223,120 @@
 .container.active .toggle-right {
     transform: translateX(200%);
 }
+
+/* --- Mobile View --- */
+@media (max-width: 768px) {
+    .allpage {
+        height: auto;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 0;
+        background-attachment: scroll;
+    }
+
+    .container {
+        width: 90%;
+        height: auto;
+        min-height: auto;
+        padding: 25px 25px 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: visible;
+    }
+
+    /* ซ่อน toggle-container เดิมใน mobile */
+    .toggle-container {
+        display: none !important;
+    }
+
+    /* ฟอร์มเต็มพื้นที่ */
+    .form-container {
+        position: relative;
+        width: 100%;
+        height: auto;
+        transform: none !important;
+        opacity: 1 !important;
+    }
+
+    .sign-in,
+    .sign-up {
+        width: 100%;
+        left: 0 !important;
+        transform: none !important;
+    }
+
+    .container.active .sign-in {
+        display: none;
+    }
+
+    .container:not(.active) .sign-up {
+        display: none;
+    }
+
+    .container form {
+        padding: 0 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .container h1 {
+        font-size: 24px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .container input {
+        font-size: 14px;
+        padding: 10px 12px;
+        margin: 8px 0;
+    }
+
+    .container button {
+        font-size: 13px;
+        padding: 10px 35px;
+        margin: 12px auto;
+        display: block;
+        border-radius: 8px;
+    }
+
+    /* ปุ่มสลับฟอร์มเฉพาะ mobile */
+    .mobile-toggle {
+        display: block;
+        text-align: center;
+        margin-top: 5px;
+    }
+
+    .mobile-toggle p{
+        font-size: 16px;
+    }
+
+    .mobile-toggle button {
+        background-color: transparent;
+        border: 1px solid #0256f2;
+        color: #0256f2;
+        font-weight: 600;
+        font-size: 13px;
+        border-radius: 6px;
+        padding: 8px 20px;
+        cursor: pointer;
+        transition: 0.3s;
+        text-transform: uppercase;
+    }
+
+    .mobile-toggle button:hover {
+        background-color: #0256f2;
+        color: #fff;
+    }
+}
+
+/* --- Tablet & Desktop (>768px) --- */
+@media (min-width: 769px) {
+    /* ซ่อน mobile-toggle บนจอใหญ่ */
+    .mobile-toggle {
+        display: none !important;
+    }
+}

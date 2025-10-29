@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './profile.css';
 import { BsPersonSquare } from 'react-icons/bs';
-import { AiFillEdit, AiFillMessage, AiFillStar } from 'react-icons/ai';
+import { AiFillEdit } from 'react-icons/ai';
 import { LuLogOut } from 'react-icons/lu';
-import { GiNotebook } from 'react-icons/gi';
-import { BsGraphUp, BsRobot, BsCalendar2CheckFill } from 'react-icons/bs';
+// import { GiNotebook } from 'react-icons/gi';
+// import { BsGraphUp, BsRobot, BsCalendar2CheckFill } from 'react-icons/bs';
 import Navbar from './navbar';
 import Swal from 'sweetalert2';
 
@@ -48,7 +48,24 @@ const Profile = () => {
             time: '16:45',
             // messageCount: 22,
             type: 'chat'
-        }
+        },
+        {
+            id: 4,
+            topic: 'Muscular System',
+            date: '2024-01-18',
+            time: '16:45',
+            // messageCount: 22,
+            type: 'chat'
+        },
+        ,
+        {
+            id: 5,
+            topic: 'Muscular System',
+            date: '2024-01-18',
+            time: '16:45',
+            // messageCount: 22,
+            type: 'chat'
+        },
     ]);
 
     const [quizHistory, setQuizHistory] = useState([
@@ -96,17 +113,64 @@ const Profile = () => {
                     explanation: 'The epiglottis acts as a flap that closes over the trachea during swallowing, preventing food and liquid from entering the airways.'
                 }
             ]
+            
         },
-        // {
-        //     id: 3,
-        //     title: 'CSS Grid Layout',
-        //     score: 75,
-        //     totalQuestions: 12,
-        //     system: 'AI Quiz Bot',
-        //     date: '2024-01-18',
-        //     time: '09:45',
-        //     questions: []
-        // }
+        {
+            id: 3,
+            title: 'Respiratory System',
+            score: 90,
+            totalQuestions: 8,
+            system: 'Quiz',
+            date: '2024-01-19',
+            time: '11:20',
+            questions: [
+                {
+                    id: 1,
+                    question: 'What structure prevents food from entering the trachea when swallowing?',
+                    userAnswer: 'Epiglottis',
+                    correctAnswer: 'Epiglottis',
+                    isCorrect: true,
+                    explanation: 'The epiglottis acts as a flap that closes over the trachea during swallowing, preventing food and liquid from entering the airways.'
+                }
+            ]
+            
+        },
+        {
+            id: 4,
+            title: 'Muscular Systems',
+            score: 50,
+            totalQuestions: 10,
+            system: 'Quiz',
+            date: '2024-01-20',
+            time: '15:30',
+            questions: [
+                {
+                    id: 1,
+                    question: 'The stomach is a large muscular sack that breaks down food particles.  Which system is the stomach a part of?',
+                    userAnswer: 'Digestive',
+                    correctAnswer: 'Digestive',
+                    isCorrect: true,
+                    explanation: ' The digestive system is a collection of organs that work together to process and absorb nutrients from food, and the stomach plays a crucial role in this process by using its muscles to mechanically and chemically break down food. Therefore, the stomach is a part of the digestive system.'
+                },
+                {
+                    id: 2,
+                    question: 'Which type of muscle is involuntary and found in the walls of internal organs?',
+                    userAnswer: 'Skeletal muscle',
+                    correctAnswer: 'Smooth muscle',
+                    explanation: 'Smooth muscles are involuntary muscles that control movements within internal organs such as the stomach, intestines, and blood vessels. They are not under conscious control.',
+                }
+            ]
+        },
+        {
+            id: 5,
+            title: 'CSS Grid Layout',
+            score: 75,
+            totalQuestions: 12,
+            system: 'AI Quiz Bot',
+            date: '2024-01-18',
+            time: '09:45',
+            questions: []
+        }
     ]);
 
     const [showEditModal, setShowEditModal] = useState(false);
@@ -208,21 +272,21 @@ const Profile = () => {
                     <h2>Activity Summary</h2>
                     <div className="summary-cards">
                         <div className="summary-card">
-                            <div className="card-icon chat-icon"><AiFillMessage /></div>
+                            <div className="card-icon chat-icon">💭</div>
                             <div className="card-content">
                                 <h3>24</h3>
                                 <p>All Chat</p>
                             </div>
                         </div>
                         <div className="summary-card">
-                            <div className="card-icon quiz-icon"><GiNotebook /></div>
+                            <div className="card-icon quiz-icon">📝</div>
                             <div className="card-content">
                                 <h3>12</h3>
                                 <p>Quizzes Taken</p>
                             </div>
                         </div>
                         <div className="summary-card">
-                            <div className="card-icon score-icon"><AiFillStar /></div>
+                            <div className="card-icon score-icon">🌟</div>
                             <div className="card-content">
                                 <h3>85%</h3>
                                 <p>Average Score</p>
@@ -238,7 +302,7 @@ const Profile = () => {
                         <div className="topics-list">
                             {recentTopics.map(topic => (
                                 <div key={topic.id} className="topic-item">
-                                    <div className="topic-icon"><AiFillMessage /></div>
+                                    <div className="topic-icon">💬</div>
                                     <div className="topic-content">
                                         <h4>{topic.topic}</h4>
                                         <div className="topic-meta">
@@ -264,9 +328,9 @@ const Profile = () => {
                                     <div className="quiz-content">
                                         <h4>{quiz.title}</h4>
                                         <div className="quiz-meta">
-                                            <span><BsGraphUp /> {quiz.score}/{quiz.totalQuestions * 10} scores</span>
-                                            <span><BsRobot /> {quiz.system}</span>
-                                            <span><BsCalendar2CheckFill /> {quiz.date} {quiz.time}</span>
+                                            <span>📈 {quiz.score}/{quiz.totalQuestions * 10} scores</span>
+                                            <span>🤖 {quiz.system}</span>
+                                            <span>🗓️ {quiz.date} {quiz.time}</span>
                                         </div>
                                     </div>
                                     <button

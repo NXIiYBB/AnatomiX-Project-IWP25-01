@@ -88,7 +88,7 @@ function SignIn({ setIsLoggedIn }) {
 				});
 				console.log("✅ Sign Up success: " + JSON.stringify(data));
 				setIsActive(true);
-			}else{
+			} else {
 				console.log("❌ Sign In failed: " + (data.error || "Unknown error"));
 				Swal.fire({
 					icon: 'warning',
@@ -115,6 +115,10 @@ function SignIn({ setIsLoggedIn }) {
 						<label>Password</label>
 						<input type='password' id='password' name='password' placeholder='Enter Password' required onChange={e => setPassword(e.target.value)}></input><br></br>
 						<button type='submit'>Sign In</button>
+						<div className="mobile-toggle">
+							<p>Don't have an account?</p>
+							<button type="button" onClick={handleClick}>Create Account</button>
+						</div>
 					</form>
 				</div>
 				<div className='form-container sign-up'>
@@ -129,6 +133,10 @@ function SignIn({ setIsLoggedIn }) {
 						<label>Password</label>
 						<input type='password' id='password' name='password' placeholder='Enter Password' required onChange={e => setPassword(e.target.value)}></input><br></br>
 						<button type='submit' value={'Submit'}>Sign Up</button>
+						<div className="mobile-toggle">
+							<p>Have an account?</p>
+							<button type="button" onClick={handleClick}>Sign In</button>
+						</div>
 					</form>
 				</div>
 				<div className='toggle-container'>

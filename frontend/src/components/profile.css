@@ -169,7 +169,7 @@
 
 .card-icon {
     font-size: 3rem;
-    padding: 1rem;
+    padding: 0.8rem;
     background-color: #0256f2;
     border-radius: 15px;
     display: flex;
@@ -752,4 +752,35 @@
 
 .modal::-webkit-scrollbar-thumb:hover {
     background-color: #0256f2;
+}
+
+/* Limit visible items and enable scroll */
+.topics-list,
+.quiz-history {
+    max-height: 450px; /* ความสูงรวมที่จะแสดงได้ประมาณ 3 ช่อง */
+    overflow-y: auto;
+    padding-right: 6px; /* กัน scrollbar ทับข้อความ */
+}
+
+/* สไตล์ scrollbar ให้เข้ากับ theme */
+.topics-list::-webkit-scrollbar,
+.quiz-history::-webkit-scrollbar {
+    width: 6px;
+}
+
+.topics-list::-webkit-scrollbar-track,
+.quiz-history::-webkit-scrollbar-track {
+    background: #f1f3f4;
+    border-radius: 3px;
+}
+
+.topics-list::-webkit-scrollbar-thumb,
+.quiz-history::-webkit-scrollbar-thumb {
+    background-color: #0256f2;
+    border-radius: 3px;
+}
+
+.topics-list::-webkit-scrollbar-thumb:hover,
+.quiz-history::-webkit-scrollbar-thumb:hover {
+    background-color: #0146c2;
 }
