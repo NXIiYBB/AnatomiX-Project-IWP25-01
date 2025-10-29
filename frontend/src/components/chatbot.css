@@ -7,10 +7,11 @@
     font-family: 'Montserrat', sans-serif;
 }
 
-body {
+/* body {
     background-color: #dde6ed;
-    /* overflow-y: hidden; */
-}
+    background-color: #f0f4ff;
+    overflow-y: hidden;
+} */
 
 /* .chatbot {
     display: flex;
@@ -28,7 +29,8 @@ body {
 } */
 
 .chatbot-container {
-    border-radius: 10px;
+    background-color: #f0f4ff;
+    /* border-radius: 10px; */
     height: 100vh;
     /* overflow: hidden; */
 }
@@ -40,7 +42,7 @@ body {
     border-radius: 10px;
     display: flex;
     gap: 20px;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 /* Left Navigation */
@@ -80,16 +82,16 @@ body {
 .topic-display {
     padding: 1.5rem 2rem;
     background-color: white;
-    color: #333;
+    color: #1a1a1a;
     text-align: start;
     border-radius: 10px 10px 0 0;
     border-bottom: 1px solid #eceff3;
-    box-shadow: 0 20px 10px rgba(0, 0, 0, 0.19);
+    /* box-shadow: 0 20px 10px rgba(0, 0, 0, 0.19); */
 
 }
 
 .topic-display h3 {
-    color: #333;
+    color: #1a1a1a;
     font-size: 1.4rem;
     font-weight: 700;
 }
@@ -279,6 +281,11 @@ body {
     outline: none;
 }
 
+.button-group {
+    display: flex;
+    gap: 1rem;
+}
+
 .send-btn {
     padding: 1rem 2rem;
     background-color: #0256f2;
@@ -289,6 +296,23 @@ body {
     font-size: 1rem;
     transition: all 0.3s ease;
     min-width: 80px;
+}
+
+.quiz-btn {
+    padding: 1rem 1.5rem;
+    background-color: #0256f2;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.quiz-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
 }
 
 .send-btn:hover {
@@ -316,7 +340,7 @@ body {
 
 .sidebar-header h3 {
     margin-bottom: 1.5rem;
-    color: #2c3e50;
+    color: #1a1a1a;
     font-size: 1.4rem;
     text-align: center;
 }
@@ -393,69 +417,73 @@ body {
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-    .left-navigation {
-        width: 80px;
+    .main-layout {
+        flex-direction: row;
+        gap: 15px;
+        padding: 60px 15px 15px;
     }
 
-    .nav-label {
-        display: none;
-    }
-
-    .nav-header h2 {
-        font-size: 1rem;
-    }
-
-    .user-profile span {
-        display: none;
+    .chat-area {
+        flex: 1;
     }
 
     .right-sidebar {
-        width: 300px;
+        width: 280px;
+    }
+
+    .send-btn,
+    .quiz-btn {
+        padding: 0.8rem 1.2rem;
+        font-size: 0.9rem;
     }
 }
 
 @media (max-width: 768px) {
     .main-layout {
         flex-direction: column;
+        padding: 70px 10px;
     }
 
-    .left-navigation {
-        width: 100%;
-        height: 70px;
-        flex-direction: row;
+    .chat-area {
+        border-radius: 10px;
     }
 
-    .nav-header {
+    .messages-container {
         padding: 1rem;
-    }
-
-    .nav-list {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        padding: 0 1rem;
-    }
-
-    .nav-list li {
-        margin: 0 0.5rem;
-    }
-
-    .nav-footer {
-        display: none;
-    }
-
-    .right-sidebar {
-        width: 100%;
-        height: 200px;
-    }
-
-    .topic-modal-content {
-        padding: 2rem;
-        margin: 1rem;
     }
 
     .message-content {
         max-width: 90%;
+        padding: 1rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    .right-sidebar {
+        width: 100%;
+        height: auto;
+        box-shadow: none;
+        margin-top: 1rem;
+    }
+
+    .topic-modal-content {
+        width: 95%;
+        padding: 1.5rem;
+    }
+
+    .input-container {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .button-group {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .send-btn,
+    .quiz-btn {
+        width: 48%;
     }
 }
 

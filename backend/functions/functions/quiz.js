@@ -1,7 +1,7 @@
 const { db } = require("./firebase");
 const { GoogleGenAI } = require("@google/genai"); // หรือ GenAI instance ของคุณ
 const ai = new GoogleGenAI({ apiKey: process.env.GENAI_API_KEY });
-const { doc, collection, writeBatch, serverTimestamp, setDoc } = require("firebase/firestore");
+const { doc, collection, writeBatch, serverTimestamp, setDoc, getDocs } = require("firebase/firestore");
 
 // 1. createQuiz
 /**
@@ -36,6 +36,7 @@ async function createQuiz(req, res) {
     const prompt = `
     คุณเป็นครูผู้เชี่ยวชาญด้านสรีรวิทยา
     สร้างแบบทดสอบสำหรับนักเรียนมัธยมปลายหรือระดับปริญญาตรี
+    **ห้าม** สร้างข้อความนำ, ข้อความสรุป, หรือคำอธิบายใดๆ ก่อนหรือหลัง JSON array
     ระบบร่างกาย: ${systems.join ? systems.join(", ") : systems}
     จำนวนคำถาม: ${numQuestions}
     ระดับความยาก: ${difficulty}
@@ -70,8 +71,9 @@ async function createQuiz(req, res) {
         throw err;
     }
 
+    const userDocRef = doc(db, "users", uid);
     // สร้าง quizId (doc อัตโนมัติ)
-    const quizRef = doc(collection(db, "users", uid, "quizzes"));
+    const quizRef = doc(collection(userDocRef, "quizzes"));
 
     await setDoc(quizRef, {
     systems,
@@ -83,14 +85,14 @@ async function createQuiz(req, res) {
     // เพิ่ม questions ลง subcollection
     const batch = writeBatch(db);
     questions.forEach((q, idx) => {
-    const qRef = doc(collection(quizRef, "questions"), `q${idx + 1}`);
+    const qRef = doc(collection(quizRef, "questions"), `q${String(idx + 1).padStart(2, "0")}`);
     batch.set(qRef, { ...q, userAnswer: null, score: null });
     });
 
     await batch.commit();
 
     // res.json({ quizId: quizRef.id, questions });
-    res.json({ questions });
+    res.json({ questions, quizId: quizRef.id });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
@@ -106,15 +108,21 @@ async function createQuiz(req, res) {
  */
 async function addQuizResult(req, res) {
   try {
-    const { quizId, userId, answers } = req.body;
+    const { quizId, uid, answers } = req.body;
 
-    const quizRef = db.collection("users", uid, "quizzes").doc(quizId);
-    const questionsSnap = await quizRef.collection("questions").get();
+    // ✅ สร้าง reference
+    const userDocRef = doc(db, "users", uid);
+    const quizRef = doc(userDocRef, "quizzes", quizId);
+    const questionsColRef = collection(quizRef, "questions");
 
-    const batch = db.batch();
+    // ✅ ดึงข้อมูล questions
+    const questionsSnap = await getDocs(questionsColRef);
+
+    // ✅ เริ่ม batch
+    const batch = writeBatch(db);
     let totalScore = 0;
 
-    questionsSnap.forEach((docSnap, idx) => {
+    questionsSnap.docs.forEach((docSnap, idx) => {
       const q = docSnap.data();
       const userAnswer = answers[idx];
       const score = userAnswer === q.answer ? 1 : 0;
@@ -123,8 +131,10 @@ async function addQuizResult(req, res) {
       batch.update(docSnap.ref, { userAnswer, score });
     });
 
-    // อัปเดตคะแนนรวม
+    // ✅ อัปเดตคะแนนรวมใน quiz document
     batch.update(quizRef, { totalScore });
+
+    // ✅ commit การเขียนทั้งหมด
     await batch.commit();
 
     res.json({ message: "Quiz results saved", totalScore });

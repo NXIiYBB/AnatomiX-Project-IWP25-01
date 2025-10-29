@@ -35,6 +35,7 @@ app.get("/chat/addMessage", addMessage, (req, res) => {});
 app.get("/chat/history", getConversationHistory, (req, res) => {});
 app.post("/chat/historyList", getConversationList, (req, res) => {});
 app.post("/quiz/create", createQuiz, (req, res) => {});
+app.post("/quiz/result", addQuizResult, (req, res) => {});
 
 const systemPrompt = fs.readFileSync(
   path.join(__dirname, "../prompt/system_prompt.txt"),

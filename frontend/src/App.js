@@ -38,11 +38,11 @@ function App() {
                         {/* <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} /> */}
                         <Route path="/chat" element={isLoggedIn ? <Chat uid={uid} /> : <Navigate to="/" />} />
                         {/* <Route path="/quiz" element={isLoggedIn ? <Quiz /> : <Navigate to="/login" />} /> */}
-                        <Route path="/profile" element={isLoggedIn ? <Profile setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/" />} />
+                        <Route path="/profile" element={isLoggedIn ? <Profile setIsLoggedIn={setIsLoggedIn} uid={uid} /> : <Navigate to="/" />} />
                         <Route path="/home-loggedin" element={isLoggedIn ? <HomeLoggedIn /> : <Navigate to="/" />} />
                         <Route path="/quiz-generator" element={isLoggedIn ? <QuizGenerator /> : <Navigate to="/" />} />
-                        <Route path="/quiz" element={isLoggedIn ? <Quiz /> : <Navigate to="/" />} />
-                        <Route path="/quiz-result" element={isLoggedIn ? <Result /> : <Navigate to="/" />} />
+                        <Route path="/quiz" element={isLoggedIn ? <Quiz uid={uid} /> : <Navigate to="/" />} />
+                        <Route path="/quiz-result" element={isLoggedIn ? <Result uid={uid} /> : <Navigate to="/" />} />
                         <Route path="*" element={<Navigate to={isLoggedIn ? "/home" : "/"} />} />
                     </Routes>
                 </div>
@@ -52,3 +52,8 @@ function App() {
 }
 
 export default App;
+
+                        // <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
+                        // <Route path="/chat" element={<Chat />} />
+                        // <Route path="/quiz" element={isLoggedIn ? <Quiz /> : <Navigate to="/login" />} />
+                        // <Route path="/profile" element={isLoggedIn ? <Profile setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/login" />} />

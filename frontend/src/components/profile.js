@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import './profile.css';
 import { BsPersonSquare } from 'react-icons/bs';
-import { AiFillEdit, AiFillMessage, AiTwotoneStar } from 'react-icons/ai';
+import { AiFillEdit, AiFillMessage, AiFillStar } from 'react-icons/ai';
 import { LuLogOut } from 'react-icons/lu';
 import { GiNotebook } from 'react-icons/gi';
 import { BsGraphUp, BsRobot, BsCalendar2CheckFill } from 'react-icons/bs';
 import Navbar from './navbar';
+import Swal from 'sweetalert2';
+import { getFirestore, collection, doc, getDocs, getDoc, query, orderBy, limit } from "firebase/firestore";
+import { db } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
-const Profile = () => {
+const Profile = ({uid}) => {
+    const navigate = useNavigate();
     const [user, setUser] = useState({
         id: 1,
         username: 'John Doe',
@@ -19,89 +24,32 @@ const Profile = () => {
         averageScore: 85
     });
 
+    // ตัวอย่างการแสดงข้อมูล การแชท หลังจากดึง api
+
     const [recentTopics, setRecentTopics] = useState([
         {
             id: 1,
-            topic: 'การเขียนโปรแกรม JavaScript',
+            topic: 'Nervous System',
             date: '2024-01-20',
             time: '14:30',
-            messageCount: 15,
+            // messageCount: 15,
             type: 'chat'
         },
         {
             id: 2,
-            topic: 'เทคโนโลยี AI และ Machine Learning',
+            topic: 'Respiratory System',
             date: '2024-01-19',
             time: '10:15',
-            messageCount: 8,
+            // messageCount: 8,
             type: 'chat'
         },
         {
             id: 3,
-            topic: 'การออกแบบ UI/UX',
+            topic: 'Muscular System',
             date: '2024-01-18',
             time: '16:45',
-            messageCount: 22,
+            // messageCount: 22,
             type: 'chat'
-        }
-    ]);
-
-    const [quizHistory, setQuizHistory] = useState([
-        {
-            id: 1,
-            title: 'JavaScript Fundamentals',
-            score: 90,
-            totalQuestions: 10,
-            system: 'AI Quiz Bot',
-            date: '2024-01-20',
-            time: '15:30',
-            questions: [
-                {
-                    id: 1,
-                    question: 'What is the difference between let and var in JavaScript?',
-                    userAnswer: 'let has block scope while var has function scope',
-                    correctAnswer: 'let has block scope while var has function scope',
-                    isCorrect: true,
-                    explanation: 'let และ const มี block scope ในขณะที่ var มี function scope ทำให้ let และ const ปลอดภัยกว่าในการใช้งาน'
-                },
-                {
-                    id: 2,
-                    question: 'What is closure in JavaScript?',
-                    userAnswer: 'Function inside function',
-                    correctAnswer: 'A closure is a function that has access to variables in its outer scope even after the outer function has returned',
-                    isCorrect: false,
-                    explanation: 'Closure คือการที่ function สามารถเข้าถึงตัวแปรใน scope ภายนอกได้ แม้ว่า function ภายนอกจะ execute เสร็จแล้ว'
-                }
-            ]
-        },
-        {
-            id: 2,
-            title: 'React Hooks',
-            score: 85,
-            totalQuestions: 8,
-            system: 'AI Quiz Bot',
-            date: '2024-01-19',
-            time: '11:20',
-            questions: [
-                {
-                    id: 1,
-                    question: 'What is the purpose of useEffect hook?',
-                    userAnswer: 'To perform side effects',
-                    correctAnswer: 'To perform side effects in functional components',
-                    isCorrect: true,
-                    explanation: 'useEffect ใช้สำหรับจัดการ side effects เช่น API calls, subscriptions, หรือการอัพเดท DOM'
-                }
-            ]
-        },
-        {
-            id: 3,
-            title: 'CSS Grid Layout',
-            score: 75,
-            totalQuestions: 12,
-            system: 'AI Quiz Bot',
-            date: '2024-01-18',
-            time: '09:45',
-            questions: []
         }
     ]);
 
@@ -115,6 +63,91 @@ const Profile = () => {
         confirmPassword: ''
     });
 
+    const [userData, setUserData] = useState(null);
+    const [chatHistory, setChatHistory] = useState(null);
+
+    const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userRef = doc(db, "users", uid);
+
+        // --- quizzes ---
+        const quizzesSnap = await getDocs(collection(userRef, "quizzes"));
+        const quizzes = [];
+        let avgScore = 0;
+        let score = 0;
+        let all = 0;
+
+        for (const quizDoc of quizzesSnap.docs) {
+          const quizData = quizDoc.data();
+
+          const questionsSnap = await getDocs(
+            collection(userRef, "quizzes", quizDoc.id, "questions")
+          );
+          const questions = questionsSnap.docs.map((q) => ({
+            id: q.id,
+            ...q.data(),
+          }));
+
+            if (quizData.totalScore){
+                quizzes.push({
+                id: quizDoc.id,
+                ...quizData,
+                questions,
+                });
+                score += quizData.totalScore;
+                all += quizData.numQuestions;
+            }
+        }
+
+        // --- conversations ---
+        const convoRef = collection(userRef, "conversations");
+        const q = query(convoRef, orderBy("createdAt", "desc"), limit(3));
+        const convoSnap = await getDocs(q);
+        const conversations = convoSnap.docs.map((c) => ({
+        id: c.id,
+        ...c.data(),
+        }));
+
+        avgScore = score/all*100;
+        setData({ quizzes, conversations, avgScore });
+        console.log(quizzes);
+        console.log(conversations);
+        console.log(avgScore);
+      } catch (error) {
+        console.error("❌ Error fetching user data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (uid) fetchUserData();
+  }, [uid]);
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+        try {
+            const userDocRef = doc(db, "users", uid);
+            const userSnap = await getDoc(userDocRef);
+
+            if (userSnap.exists()) {
+            setUserData(userSnap.data());
+            } else {
+            console.log("No such user!");
+            }
+        } catch (error) {
+            console.error("Error fetching user info:", error);
+        }
+        };
+
+        if (uid) fetchUserInfo();
+    }, [uid]);
+
+    if (!userData) return <div>Loading...</div>;
+
     const handleEditProfile = () => {
         setEditForm({
             username: user.username,
@@ -125,11 +158,12 @@ const Profile = () => {
         setShowEditModal(true);
     };
 
+
     const handleSaveProfile = (e) => {
         e.preventDefault();
 
         if (editForm.password && editForm.password !== editForm.confirmPassword) {
-            alert('รหัสผ่านไม่ตรงกัน');
+            alert('Passwords do not match');
             return;
         }
 
@@ -140,7 +174,7 @@ const Profile = () => {
         }));
 
         setShowEditModal(false);
-        alert('อัพเดทข้อมูลสำเร็จ');
+        alert('Update successful');
     };
 
     const handleViewQuiz = (quiz) => {
@@ -148,21 +182,35 @@ const Profile = () => {
         setShowQuizModal(true);
     };
 
-    const handleLogout = () => {
-        if (window.confirm('คุณต้องการออกจากระบบหรือไม่?')) {
-            // Clear user data
-            localStorage.removeItem('userToken');
-            // Redirect to login page
-            window.location.href = '/login';
-        }
+    const handleLogout = (e) => {
+		e.preventDefault();
+         Swal.fire({
+                title: 'Are you sure?',
+                text: "You will be logged out of your account.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, logout',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Example: Redirect to logout URL
+                    window.location.href = '/login'; 
+                    // Or submit a logout form:
+                    // document.getElementById('logoutForm').submit();
+                }
+            });
+    }
+    const handleChat = (id) => {
+        navigate("/chat", { state: { id } });
     };
-
     const getScoreColor = (score) => {
         if (score >= 80) return '#27ae60';
         if (score >= 60) return '#f39c12';
         return '#e74c3c';
     };
-
+    if (loading) return <p>Loading...</p>;
     return (
         <div className="profile-page">
             <Navbar />
@@ -170,13 +218,9 @@ const Profile = () => {
                 {/* Header */}
                 <div className="profile-header">
                     <div className="user-info">
-                        <div className="avatar-section">
-                            <div className="avatar">{user.avatar}</div>
-                            <button className="edit-avatar-btn">📷</button>
-                        </div>
                         <div className="user-details">
-                            <h1>{user.username}</h1>
-                            <p className="email">{user.email}</p>
+                            <h1>{userData.username}</h1>
+                            <p className="email">{userData.email}</p>
                             {/* <p className="join-date">เข้าร่วมเมื่อ: {new Date(user.joinDate).toLocaleDateString('th-TH')}</p> */}
                         </div>
                     </div>
@@ -195,23 +239,23 @@ const Profile = () => {
                     <h2>Activity Summary</h2>
                     <div className="summary-cards">
                         <div className="summary-card">
-                            <div className="card-icon"><AiFillMessage /></div>
+                            <div className="card-icon chat-icon"><AiFillMessage /></div>
                             <div className="card-content">
-                                <h3>{user.totalChats}</h3>
+                                <h3>{data.conversations.length}</h3>
                                 <p>All Chat</p>
                             </div>
                         </div>
                         <div className="summary-card">
-                            <div className="card-icon"><GiNotebook /></div>
+                            <div className="card-icon quiz-icon"><GiNotebook /></div>
                             <div className="card-content">
-                                <h3>{user.totalQuizzes}</h3>
+                                <h3>{data.quizzes.length}</h3>
                                 <p>Quizzes Taken</p>
                             </div>
                         </div>
                         <div className="summary-card">
-                            <div className="card-icon"><AiTwotoneStar /></div>
+                            <div className="card-icon score-icon"><AiFillStar /></div>
                             <div className="card-content">
-                                <h3>{user.averageScore}%</h3>
+                                <h3>{data.avgScore}%</h3>
                                 <p>Average Score</p>
                             </div>
                         </div>
@@ -223,17 +267,17 @@ const Profile = () => {
                     <div className="section">
                         <h2>Latest Topic</h2>
                         <div className="topics-list">
-                            {recentTopics.map(topic => (
+                            {data.conversations.map(topic => (
                                 <div key={topic.id} className="topic-item">
                                     <div className="topic-icon"><AiFillMessage /></div>
                                     <div className="topic-content">
-                                        <h4>{topic.topic}</h4>
+                                        <h4>{topic.title}</h4>
                                         <div className="topic-meta">
-                                            <span>{topic.messageCount} ข้อความ</span>
-                                            <span>{topic.date} {topic.time}</span>
+                                            {/* <span>{topic.messageCount} ข้อความ</span> */}
+                                            <span>{topic.createdAt.toDate().toLocaleString()}</span>
                                         </div>
                                     </div>
-                                    <button className="view-btn">ดู</button>
+                                    <button className="view-btn" onClick={() => handleChat(topic.id)}>view</button>
                                 </div>
                             ))}
                         </div>
@@ -243,24 +287,24 @@ const Profile = () => {
                     <div className="section">
                         <h2>Quiz History</h2>
                         <div className="quiz-history">
-                            {quizHistory.map(quiz => (
+                            {data.quizzes.map(quiz => (
                                 <div key={quiz.id} className="quiz-item">
-                                    <div className="quiz-score" style={{ backgroundColor: getScoreColor(quiz.score) }}>
-                                        {quiz.score}%
+                                    <div className="quiz-score" style={{ backgroundColor: getScoreColor(quiz.totalScore) }}>
+                                        {quiz.totalScore/quiz.numQuestions*100}%
                                     </div>
                                     <div className="quiz-content">
-                                        <h4>{quiz.title}</h4>
+                                        <h4>{quiz.systems}</h4>
                                         <div className="quiz-meta">
-                                            <span><BsCalendar2CheckFill /> {quiz.score}/{quiz.totalQuestions * 10} คะแนน</span>
-                                            <span><BsRobot /> {quiz.system}</span>
-                                            <span><BsCalendar2CheckFill /> {quiz.date} {quiz.time}</span>
+                                            <span><BsGraphUp /> {quiz.totalScore}/{quiz.numQuestions} scores</span>
+                                            <span><BsRobot /> Level: {quiz.difficulty}</span>
+                                            <span><BsCalendar2CheckFill /> {quiz.createdAt.toDate().toLocaleString()}</span>
                                         </div>
                                     </div>
                                     <button
                                         className="view-quiz-btn"
                                         onClick={() => handleViewQuiz(quiz)}
                                     >
-                                        ดูรายละเอียด
+                                        Detail
                                     </button>
                                 </div>
                             ))}
@@ -274,7 +318,7 @@ const Profile = () => {
                 <div className="modal-overlay">
                     <div className="modal">
                         <div className="modal-header">
-                            <h3>แก้ไขข้อมูลส่วนตัว</h3>
+                            <h3>Edit Information</h3>
                             <button
                                 className="close-btn"
                                 onClick={() => setShowEditModal(false)}
@@ -284,7 +328,7 @@ const Profile = () => {
                         </div>
                         <form onSubmit={handleSaveProfile}>
                             <div className="form-group">
-                                <label>ชื่อผู้ใช้</label>
+                                <label>User</label>
                                 <input
                                     type="text"
                                     value={editForm.username}
@@ -293,7 +337,7 @@ const Profile = () => {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>อีเมล</label>
+                                <label>Email</label>
                                 <input
                                     type="email"
                                     value={editForm.email}
@@ -302,31 +346,31 @@ const Profile = () => {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>รหัสผ่านใหม่ (ไม่บังคับ)</label>
+                                <label>New Password (Not Required)</label>
                                 <input
                                     type="password"
                                     value={editForm.password}
                                     onChange={(e) => setEditForm(prev => ({ ...prev, password: e.target.value }))}
-                                    placeholder="ใส่รหัสผ่านใหม่หากต้องการเปลี่ยน"
+                                    placeholder="Enter a new password if you want to change it."
                                 />
                             </div>
                             {editForm.password && (
                                 <div className="form-group">
-                                    <label>ยืนยันรหัสผ่าน</label>
+                                    <label>Confirm Password</label>
                                     <input
                                         type="password"
                                         value={editForm.confirmPassword}
                                         onChange={(e) => setEditForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                                        placeholder="ยืนยันรหัสผ่านใหม่"
+                                        placeholder="Confirm New Password"
                                         required
                                     />
                                 </div>
                             )}
                             <div className="modal-actions">
                                 <button type="button" onClick={() => setShowEditModal(false)}>
-                                    ยกเลิก
+                                    cancel
                                 </button>
-                                <button type="submit">บันทึก</button>
+                                <button type="submit">Save</button>
                             </div>
                         </form>
                     </div>
@@ -349,50 +393,50 @@ const Profile = () => {
                         <div className="quiz-summary">
                             <div className="quiz-stats">
                                 <div className="stat">
-                                    <span className="label">คะแนน:</span>
-                                    <span className="value" style={{ color: getScoreColor(selectedQuiz.score) }}>
-                                        {selectedQuiz.score}%
+                                    <span className="label">Point:</span>
+                                    <span className="value" style={{ color: getScoreColor(selectedQuiz.totalScore) }}>
+                                        {selectedQuiz.totalScore/selectedQuiz.numQuestions*100}%
                                     </span>
                                 </div>
                                 <div className="stat">
-                                    <span className="label">จำนวนข้อ:</span>
-                                    <span className="value">{selectedQuiz.totalQuestions} ข้อ</span>
+                                    <span className="label">Number of questions:</span>
+                                    <span className="value">{selectedQuiz.numQuestions} questions</span>
                                 </div>
                                 <div className="stat">
-                                    <span className="label">ระบบ:</span>
-                                    <span className="value">{selectedQuiz.system}</span>
+                                    <span className="label">System:</span>
+                                    <span className="value">{selectedQuiz.systems}</span>
                                 </div>
                                 <div className="stat">
-                                    <span className="label">วันที่:</span>
-                                    <span className="value">{selectedQuiz.date} {selectedQuiz.time}</span>
+                                    <span className="label">Date:</span>
+                                    <span className="value">{selectedQuiz.createdAt.toDate().toLocaleString()}</span>
                                 </div>
                             </div>
                         </div>
 
                         {selectedQuiz.questions.length > 0 && (
                             <div className="quiz-questions">
-                                <h4>รายละเอียดคำถาม</h4>
+                                <h4>question details</h4>
                                 {selectedQuiz.questions.map((q, index) => (
-                                    <div key={q.id} className={`question-item ${q.isCorrect ? 'correct' : 'incorrect'}`}>
+                                    <div key={q.id} className={`question-item ${q.score ? 'correct' : 'incorrect'}`}>
                                         <div className="question-header">
-                                            <span className="question-number">ข้อ {index + 1}</span>
-                                            <span className={`question-status ${q.isCorrect ? 'correct' : 'incorrect'}`}>
-                                                {q.isCorrect ? '✓ ถูก' : '✗ ผิด'}
+                                            <span className="question-number">question {index + 1}</span>
+                                            <span className={`question-status ${q.score ? 'correct' : 'incorrect'}`}>
+                                                {q.score ? '✓ ถูก' : '✗ ผิด'}
                                             </span>
                                         </div>
                                         <div className="question-content">
                                             <p className="question-text">{q.question}</p>
                                             <div className="answer-section">
                                                 <div className="user-answer">
-                                                    <strong>คำตอบของคุณ:</strong> {q.userAnswer}
+                                                    <strong>Your answer:</strong> {q.userAnswer}
                                                 </div>
-                                                {!q.isCorrect && (
+                                                {q.score === 0 && (
                                                     <div className="correct-answer">
-                                                        <strong>คำตอบที่ถูก:</strong> {q.correctAnswer}
+                                                        <strong>Correct Answer:</strong> {q.answer}
                                                     </div>
                                                 )}
                                                 <div className="explanation">
-                                                    <strong>คำอธิบาย:</strong> {q.explanation}
+                                                    <strong>Explanation:</strong> {q.explanation}
                                                 </div>
                                             </div>
                                         </div>

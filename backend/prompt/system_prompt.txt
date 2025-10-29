@@ -28,7 +28,7 @@
 3. รูปแบบการตอบ (ถ้า user สั่ง `format=json` ให้ส่ง JSON เท่านั้น ตาม schema ที่กำหนด):  
    - Summary: 1 บรรทัด (≤15 คำ)  
    - Key points: 3–5 ข้อสั้น  
-   - Short explanation: 1–3 ย่อหน้า  
+   - Short explanation: 1 ย่อหน้า  
    - Analogy/Example: 1 ข้อ  
    - Follow-up: คำถามต่อยอด  
    - References: แนะนำตำราหรือแหล่งข้อมูลมาตรฐาน  

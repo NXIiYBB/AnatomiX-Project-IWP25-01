@@ -1,30 +1,41 @@
 .menu {
-    padding: 10px 20px;
+    padding: 10px 30px;
     display: flex;
-    justify-content: space-between; /* โลโก้ซ้าย เมนูขวา */
-    align-items: center;            /* จัดกลางในแนวตั้ง */
-    background-color: #f9f9f9;      /* เพิ่มพื้นหลัง */
-    height: 60px;                   /* กำหนดความสูงคงที่ */
-    position: r;                /* ตรึง navbar ด้านบน */
-    position: absolute;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    height: 60px;
+    /* position: r; */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000;                  /* กัน navbar ถูกบัง */
+    z-index: 1000;
+    /* box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); */
 }
+
 .logo-icon {
+    /* padding: px; */
     font-size: 30px;
-    
+    color: #0256f2;
 }
 
 .icon {
-    font-size: 20px;
+    color: #27374d;
+    font-size: 22px;
 }
+
 .logo {
     display: flex;
     align-items: center;
-    gap: 10px;
-    color: #27374d;
+    gap: 5px;
+    color: black;
+    /*#27374d*/
+}
+
+.logo h1 {
+    padding: 5px;
+    font-size: 26px;
 }
 
 ul {
@@ -35,7 +46,7 @@ ul {
 
 .menu--list {
     display: flex;
-    flex-direction: row;  /* 👉 เรียงเมนูแนวนอน */
+    flex-direction: row;
     gap: 20px;
 }
 
@@ -43,19 +54,106 @@ ul {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 1.1rem;
+    font-size: 18px;
     text-decoration: none;
     font-weight: 600;
     padding: 8px 12px;
     border-radius: 8px;
     transition: 0.3s ease-in-out;
-    color: #27374d;
+    color: black;
+}
+
+.profile-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.4rem;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: 0.3s ease-in-out;
+    color: black;
+}
+
+.profile-icon {
+    font-size: 26px;
+    color: black;
+    /* #27374d*/
+    /* background-color: grey; */
+    border-radius: 50%;
+}
+
+.profile :hover {
+    background-color: #0256f2;
+    /* opacity: 50%; */
+    color: #dde6ed;
+
 }
 
 .menu--list .item:hover {
-    background-color: #27374d;
+    background-color: #0256f2;
+    /* opacity: 50%; */
     color: #dde6ed;
 }
+
+.hamburger {
+    display: none;
+    font-size: 26px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .menu-container {
+        display: none;
+        position: fixed;
+        top: 60px;
+        right: 0;
+        width: 100%;
+        background: white;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        border-radius: 0 0 10px 10px;
+        z-index: 999;
+    }
+
+    .menu-container.open {
+        display: block;
+    }
+
+    .menu--list {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px ;
+        margin: 0;
+        gap: 0;
+    }
+
+    .menu--list .item {
+        font-size: 16px;
+    }
+
+    .logo-icon {
+        /* padding: px; */
+        font-size: 28px;
+    }
+
+    .logo h1 {
+        padding: 5px;
+        font-size: 22px;
+    }
+
+    .hamburger {
+        font-size: 20px;
+        display: block;
+        color: black;
+    }
+
+    .icon {
+        color: #27374d;
+        font-size: 20px;
+    }
+}
+
 /* ======================================================== */
 /* .menu {
     display: flex;
@@ -167,4 +265,3 @@ ul {
     background-color: #27374d;
     color: #dde6ed;
 } */
-
