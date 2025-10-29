@@ -9,15 +9,30 @@ export default function Quiz({uid}) {
   const query = new URLSearchParams(location.search);
   // const uid = auth.currentUser?.uid;
 
-  const title = query.get("title") || "Quiz";
-  const num = parseInt(query.get("num")) || 5;
-  const level = query.get("level") || "Medium";
+  const title = query.get("title") || undefined;
+  const num = parseInt(query.get("num")) || undefined;
+  const level = query.get("level") || undefined;
 
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(false);
   const [score, setScore] = useState(null);
   const [quizId, setQuizId] = useState(null);
+
+  useEffect(() => {
+    if (location.state?.questions) {
+      const q = location.state.questions;
+      setQuestions(Array.isArray(q) ? q : Object.values(q));
+    }
+
+    if (location.state?.quizId) {
+      setQuizId(location.state.quizId);
+    }
+  }, [location.state]);
+
+  console.log("✅ questions:", questions);
+  console.log("✅ quizId:", quizId);
+  console.log("✅ title:", title);
 
   const [created, setCreated] = useState(false);
   // useEffect(() => {

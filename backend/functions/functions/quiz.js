@@ -34,21 +34,21 @@ async function createQuiz(req, res) {
     // ]
     // `;
     const prompt = `
-    คุณเป็นครูผู้เชี่ยวชาญด้านสรีรวิทยา
-    สร้างแบบทดสอบสำหรับนักเรียนมัธยมปลายหรือระดับปริญญาตรี
-    **ห้าม** สร้างข้อความนำ, ข้อความสรุป, หรือคำอธิบายใดๆ ก่อนหรือหลัง JSON array
-    ระบบร่างกาย: ${systems.join ? systems.join(", ") : systems}
-    จำนวนคำถาม: ${numQuestions}
-    ระดับความยาก: ${difficulty}
+    You are an expert physiology teacher.
+    Create a multiple-choice quiz for high school or undergraduate students.
+    **Do not** include any introductory text, summary, or explanation before or after the JSON array.
+    Body system(s): ${systems.join ? systems.join(", ") : systems}
+    Number of questions: ${numQuestions}
+    Difficulty level: ${difficulty}
 
-    แต่ละคำถามต้องเป็นแบบปรนัย มีตัวเลือก 4 ข้อ
-    ส่งออกผลลัพธ์เป็น JSON array ของ object ตามรูปแบบนี้เท่านั้น:
+    Each question must be multiple-choice with 4 options.
+    Output the result as a JSON array of objects in this exact format:
     [
     {
-        "question": "คำถาม...",
-        "choices": ["ตัวเลือก A", "ตัวเลือก B", "ตัวเลือก C", "ตัวเลือก D"],
-        "answer": "ตัวเลือกที่ถูกต้อง",
-        "explanation": "คำอธิบายสั้นๆ"
+        "question": "Question text...",
+        "choices": ["Option A", "Option B", "Option C", "Option D"],
+        "answer": "Correct option",
+        "explanation": "Short explanation"
     }
     ]
     `;
@@ -144,4 +144,85 @@ async function addQuizResult(req, res) {
   }
 }
 
-module.exports = {createQuiz, addQuizResult};
+// 3. createQuizFromConversation
+/**
+ * createQuizFromConversation
+ * @param {Request} req
+ * @param {Response} res
+ * @return {void}
+ */
+async function createQuizFromConversation(req, res) {
+  try {
+    const { uid, conversationId, title, content } = req.body;
+
+    if (!uid || !content) {
+      return res.status(400).json({ error: "Missing uid or content" });
+    }
+
+    // 🔹 เรียก model สร้างคำถามจากเนื้อหา (สมมุติใช้ GPT)
+    const prompt = `
+    You are an expert physiology teacher.
+    Create a quiz for high school or undergraduate students.
+    Generate 15 multiple-choice questions based on the content below.
+    Each question must have 4 answer choices.
+    Output the result as a JSON array of objects in this exact format:
+    [
+    {
+        "question": "Question text...",
+        "choices": ["Option A", "Option B", "Option C", "Option D"],
+        "answer": "Correct option",
+        "explanation": "Short explanation"
+    }
+    ]
+    Content:
+    ${content}
+    `;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+    });
+
+    let raw = response.text;
+
+    // ลบ ```json หรือ ``` ออก
+    raw = raw.replace(/```(json)?/g, "").trim();
+
+    let questions;
+    try {
+        questions = JSON.parse(raw);
+    } catch (err) {
+        console.error("Failed to parse JSON from AI:", raw);
+        throw err;
+    }
+
+    const userDocRef = doc(db, "users", uid);
+    // สร้าง quizId (doc อัตโนมัติ)
+    const quizRef = doc(collection(userDocRef, "quizzes"));
+
+    await setDoc(quizRef, {
+    systems: title,
+    numQuestions: 15,
+    difficulty: "-",
+    createdAt: serverTimestamp(),
+    sourceConversation: conversationId || null,
+    });
+
+    // เพิ่ม questions ลง subcollection
+    const batch = writeBatch(db);
+    questions.forEach((q, idx) => {
+    const qRef = doc(collection(quizRef, "questions"), `q${String(idx + 1).padStart(2, "0")}`);
+    batch.set(qRef, { ...q, userAnswer: null, score: null });
+    });
+
+    await batch.commit();
+
+    // res.json({ quizId: quizRef.id, questions });
+    res.json({ questions, quizId: quizRef.id });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = {createQuiz, addQuizResult, createQuizFromConversation};

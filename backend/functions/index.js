@@ -4,7 +4,7 @@ const express = require("express");
 const admin = require("firebase-admin");
 const {authenticate} = require("./functions/auth");
 const {signUp, logIn} = require("./functions/test");
-const {createQuiz, addQuizResult} = require("./functions/quiz");
+const {createQuiz, addQuizResult, createQuizFromConversation} = require("./functions/quiz");
 const {createConversation, addMessage, getConversationHistory, getConversationList} = require("./functions/addMessage");
 const { GoogleGenAI } = require("@google/genai");
 const fs = require("fs");
@@ -35,6 +35,7 @@ app.get("/chat/addMessage", addMessage, (req, res) => {});
 app.get("/chat/history", getConversationHistory, (req, res) => {});
 app.post("/chat/historyList", getConversationList, (req, res) => {});
 app.post("/quiz/create", createQuiz, (req, res) => {});
+app.post("/quiz/fromConversation", createQuizFromConversation, (req, res) => {});
 app.post("/quiz/result", addQuizResult, (req, res) => {});
 
 const systemPrompt = fs.readFileSync(

@@ -112,7 +112,7 @@ const Profile = ({uid}) => {
         ...c.data(),
         }));
 
-        avgScore = score/all*100;
+        avgScore = (score/all*100).toFixed(2);
         setData({ quizzes, conversations, avgScore });
         console.log(quizzes);
         console.log(conversations);
@@ -290,7 +290,7 @@ const Profile = ({uid}) => {
                             {data.quizzes.map(quiz => (
                                 <div key={quiz.id} className="quiz-item">
                                     <div className="quiz-score" style={{ backgroundColor: getScoreColor(quiz.totalScore) }}>
-                                        {quiz.totalScore/quiz.numQuestions*100}%
+                                        {(quiz.totalScore/quiz.numQuestions*100).toFixed(1)}%
                                     </div>
                                     <div className="quiz-content">
                                         <h4>{quiz.systems}</h4>
@@ -395,7 +395,7 @@ const Profile = ({uid}) => {
                                 <div className="stat">
                                     <span className="label">Point:</span>
                                     <span className="value" style={{ color: getScoreColor(selectedQuiz.totalScore) }}>
-                                        {selectedQuiz.totalScore/selectedQuiz.numQuestions*100}%
+                                        {(selectedQuiz.totalScore/selectedQuiz.numQuestions*100).toFixed(2)}%
                                     </span>
                                 </div>
                                 <div className="stat">

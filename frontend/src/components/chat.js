@@ -8,7 +8,15 @@ import { BiSolidCommentAdd } from 'react-icons/bi';
 import Navbar from './navbar';
 import { auth } from "../firebase";
 import Swal from 'sweetalert2';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { db } from "../firebase"; // ✅ ไฟล์ที่ export db จาก Firebase config
+import { 
+  collection, 
+  getDocs, 
+  getDoc, 
+  doc 
+} from "firebase/firestore";
+import ReactMarkdown from "react-markdown";
 
 function Chat({uid}) {
 	const [topic, setTopic] = useState('');
@@ -21,6 +29,7 @@ function Chat({uid}) {
 	const messagesEndRef = useRef(null);
 	const [message, setMessage] = useState([]);
 	const location = useLocation();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const { id } = location.state || {};
@@ -214,6 +223,27 @@ function Chat({uid}) {
 		});
 	};
 
+	const handleCreateQuiz = async (e, conversationId) => {
+		e.preventDefault();
+		const convoRef = collection(db, `users/${uid}/conversations/${conversationId}/messages`);
+		const snap = await getDocs(convoRef);
+		const content = snap.docs.map(d => d.data().text).join(" ");
+
+		const convoDoc = await getDoc(doc(db, `users/${uid}/conversations/${conversationId}`));
+		const title = convoDoc.data()?.title || "Untitled Conversation";
+
+		const response = await fetch("http://127.0.0.1:5001/anatomix-c8c63/us-central1/api/quiz/fromConversation", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ uid, conversationId, title, content }),
+		});
+
+		const data = await response.json();
+		console.log("✅ Created quiz:", data);
+		// navigate(`/quiz/${data.quizId}`);
+		navigate("/quiz", { state: { title: title, quizId: data.quizId, questions: data.questions } });
+	};
+
 	// Navigation items
 	// const navItems = [
 	// 	{ id: 'home', icon: <BiHome />, label: 'Home', href: '#home' },
@@ -245,7 +275,7 @@ function Chat({uid}) {
 					</div>
 
 
-					{/* Topic Input Modal */}
+					{/* Topic Input Modal
 					{showTopicInput && (
 						<div className="topic-modal">
 							<div className="topic-modal-content">
@@ -266,7 +296,7 @@ function Chat({uid}) {
 								</form>
 							</div>
 						</div>
-					)}
+					)} */}
 
 					{/* Chat Messages */}
 					{!showTopicInput && (
@@ -275,7 +305,7 @@ function Chat({uid}) {
 								{messages.map(message => (
 									<div key={message.id} className={`message ${message.role}`}>
 										<div className="message-content">
-											<p>{message.text}</p>
+											<p><ReactMarkdown>{message.text}</ReactMarkdown></p>
 											{/* <span className="timestamp">{message.timestamp}</span> */}
 										</div>
 									</div>
@@ -295,7 +325,7 @@ function Chat({uid}) {
 									/>
 									<div className='button-group'>
 										<button type="submit" className="send-btn">Send</button>
-										<button type='button' className='quiz-btn' onClick={handleGenerateQuiz}>Generate Quiz</button>
+										<button type='button' className='quiz-btn' onClick={(e) => handleCreateQuiz(e, selectedConversationId)}>Generate Quiz</button>
 									</div>
 								</div>
 							</form>
@@ -330,6 +360,28 @@ function Chat({uid}) {
 						)}
 					</div>
 				</div>
+				{/* Topic Input Modal */}
+					{showTopicInput && (
+						<div className="topic-modal">
+							<div className="topic-modal-content">
+								<h2>Start Learning!</h2>
+								<p>What would you like to ask or talk about?</p>
+								<form onSubmit={handleTopicSubmit}>
+									<input
+										type="text"
+										value={topic}
+										onChange={(e) => setTopic(e.target.value)}
+										// placeholder="เช่น การทำอาหาร, เทคโนโลยี, การศึกษา..."
+										className="topic-input"
+										autoFocus
+									/>
+									<button type="submit" className="topic-submit-btn">
+										Start
+									</button>
+								</form>
+							</div>
+						</div>
+					)}
 			</div>
 		</div>
 	);
