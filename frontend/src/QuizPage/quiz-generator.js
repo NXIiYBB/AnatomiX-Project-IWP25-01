@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./quiz-generator.css";
 import Navbar from '../components/navbar';
+import Loading from '../components/loading';
 
-export default function QuizGenerator() {
+export default function QuizGenerator({uid}) {
   const [generated, setGenerated] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [created, setCreated] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -14,22 +17,22 @@ export default function QuizGenerator() {
   });
 
   const topics = [
-    "ระบบไหลเวียนเลือด",
-    "ระบบทางเดินหายใจ",
-    "ระบบย่อยอาหาร",
-    "ระบบประสาท",
-    "ระบบกล้ามเนื้อและโครงร่าง",
-    "ระบบขับถ่าย/ปัสสาวะ",
-    "ระบบต่อมไร้ท่อ",
-    "สุ่ม 1 ระบบ",
-    "รวมทุกระบบในร่างกาย"
-  ];
+    "Cardiovascular System",
+    "Respiratory System",
+    "Digestive System",
+    "Nervous System",
+    "Musculoskeletal System",
+    "Urinary System",
+    "Endocrine System",
+    "Random System",
+    "All Systems"
+];
   const numbers = [10, 20, 30];
   const difficulties = ["Easy", "Medium", "Hard"];
   
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const { title, numQuestions, difficulty } = formData;
 
@@ -38,9 +41,38 @@ export default function QuizGenerator() {
       return;
     }
 
-    // ✅ ส่งค่าที่เลือกไปหน้า /quiz พร้อม query params
-    navigate(`/quiz?title=${encodeURIComponent(title)}&num=${numQuestions}&level=${difficulty}`);
+    if (created) return;
+    setLoading(true);
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:5001/anatomix-c8c63/us-central1/api/quiz/create",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            uid,
+            systems: title,       // ["ระบบประสาท", ...]
+            numQuestions: numQuestions,
+            difficulty: difficulty,    // "easy", "medium", "hard"
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch questions");
+
+      const data = await response.json();
+      console.log("Quiz created:", data);
+      setCreated(true); // ✅ ป้องกันเรียกซ้ำ
+      navigate("/quiz", { state: { title: title, quizId: data.quizId, questions: data.questions } });
+
+    } catch (err) {
+      console.error("Error creating quiz:", err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading) return <Loading />;
 
   return (
     <div className="quiz-generator-container">
@@ -52,10 +84,19 @@ export default function QuizGenerator() {
         {/* Quiz Title */}
         <div className="form-group">
           <label htmlFor="title">Quiz Title</label>
-          <select id="title" name="title" value={formData.title} onChange={handleChange}>
-            <option value="">Select</option>
-            {topics.map((topic, i) => <option key={i} value={topic}>{topic}</option>)}
-          </select>
+          <input
+            list="topics-list"
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            placeholder="Select or type a topic"
+          />
+          <datalist id="topics-list">
+            {topics.map((topic, i) => (
+              <option key={i} value={topic} />
+            ))}
+          </datalist>
         </div>
 
         {/* Number of Questions */}

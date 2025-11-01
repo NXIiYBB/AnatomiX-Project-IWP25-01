@@ -6,114 +6,26 @@ import { auth } from "../firebase";
 export default function Quiz({uid}) {
   const location = useLocation();
   const navigate = useNavigate();
-  const query = new URLSearchParams(location.search);
   // const uid = auth.currentUser?.uid;
-
-  const title = query.get("title") || undefined;
-  const num = parseInt(query.get("num")) || undefined;
-  const level = query.get("level") || undefined;
 
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(false);
   const [score, setScore] = useState(null);
   const [quizId, setQuizId] = useState(null);
+  const [title, setTitle] = useState(null);
 
   useEffect(() => {
-    if (location.state?.questions) {
-      const q = location.state.questions;
-      setQuestions(Array.isArray(q) ? q : Object.values(q));
-    }
-
-    if (location.state?.quizId) {
-      setQuizId(location.state.quizId);
-    }
+    const state = location.state || {};
+  
+    setQuestions(Array.isArray(state.questions) ? state.questions : Object.values(state.questions || {}));
+    setQuizId(state.quizId || null);
+    setTitle(state.title || null);
   }, [location.state]);
 
   console.log("✅ questions:", questions);
   console.log("✅ quizId:", quizId);
   console.log("✅ title:", title);
-
-  const [created, setCreated] = useState(false);
-  // useEffect(() => {
-  //   if (num && title && level && !created) {
-  //     // setLoading(true);
-  //     const fetchQuestions = async () => {
-  //       console.log(num, title, level)
-  //       try {
-  //         const response = await fetch(
-  //           "http://127.0.0.1:5001/anatomix-c8c63/us-central1/api/quiz/create",
-  //           {
-  //             method: "POST",
-  //             headers: {
-  //               "Content-Type": "application/json",
-  //             },
-  //             body: JSON.stringify({
-  //               uid,
-  //               systems: title,       // เช่น ["ระบบประสาท", "ระบบไหลเวียนเลือด"]
-  //               numQuestions: num,   // จำนวนคำถาม
-  //               difficulty: level, // เช่น "easy", "medium", "hard"
-  //             }),
-  //           }
-  //         );
-
-  //         if (!response.ok) {
-  //           throw new Error("Failed to fetch questions");
-  //         }
-
-  //         const data = await response.json();
-  //         console.log(data);
-  //         setQuizId(data.quizId);
-  //         setQuestions(data.questions || []); // สมมติ API return { questions: [...] }
-  //         setCreated(true);
-  //       } catch (error) {
-  //         console.error("Error fetching questions:", error);
-  //       } finally {
-  //         setLoading(false); // ✅ โหลดเสร็จ
-  //       }
-  //     };
-
-  //     fetchQuestions();
-  //   }
-  // }, [num, title, level, created]);
-
-  const handleCreateQuiz = async () => {
-    if (!num || !title || !level) return;
-    if (created) return; // ป้องกันสร้างซ้ำ
-
-    setLoading(true);
-    try {
-      const response = await fetch(
-        "http://127.0.0.1:5001/anatomix-c8c63/us-central1/api/quiz/create",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            uid,
-            systems: title,       // ["ระบบประสาท", ...]
-            numQuestions: num,
-            difficulty: level,    // "easy", "medium", "hard"
-          }),
-        }
-      );
-
-      if (!response.ok) throw new Error("Failed to fetch questions");
-
-      const data = await response.json();
-      console.log("Quiz created:", data);
-
-      setQuizId(data.quizId);
-      setQuestions(data.questions || []);
-      setCreated(true); // ✅ ป้องกันเรียกซ้ำ
-
-      // ✅ ถ้าต้องการ เซฟ score/userAnswer ตอนนี้สามารถเรียกฟังก์ชัน saveScores(quizId, questions)
-      // await saveScores(data.quizId, data.questions);
-    } catch (err) {
-      console.error("Error creating quiz:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAnswerChange = (id, opt) => {
     setAnswers((prev) => ({ ...prev, [id]: opt }));
@@ -127,31 +39,14 @@ export default function Quiz({uid}) {
     navigate("/quiz-generator");
   };
 
-  if (loading) return <p className="loading-text">Loading questions...</p>;
-
   return (
     <div>
-    <button
-        onClick={handleCreateQuiz}
-        disabled={loading || created}
-        className="px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        {loading ? "Creating..." : created ? "Quiz Created" : "Create Quiz"}
-      </button>
 
     {quizId && (<div className="quiz-container">
       <h1 className="quiz-title">Quiz: {title}</h1>
       <p className="quiz-info">
-        Difficulty: {level} | {num} Questions
+        {questions.length} Questions
       </p>
-
-      <button
-        onClick={handleCreateQuiz}
-        disabled={loading || created}
-        className="px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        {loading ? "Creating..." : created ? "Quiz Created" : "Create Quiz"}
-      </button>
 
       {questions.map((q, index) => (
         <div key={index} className="quiz-question-card">
@@ -167,7 +62,7 @@ export default function Quiz({uid}) {
                   onChange={() => handleAnswerChange(index, opt)}
                   disabled={score !== null} // ← ปิดแก้ไขหลัง submit
                 />
-                {String.fromCharCode(65 + i)}. {opt}
+                {opt}
               </label>
             ))}
           </div>

@@ -4,9 +4,7 @@ import { Link } from "react-router-dom";
 
 export default function HomePrelogin() {
   return (
-    <>
       <div className="home-container">
-
         {/* Hero Section */}
         <section className="hero-section">
           <div className="hero-overlay">
@@ -79,8 +77,10 @@ export default function HomePrelogin() {
           </div>
         </section>
 
+        {/* Footer */}
+      <footer className="footer">
+        <p>© 2025 AnatomiX. Learn smarter, understand deeper.</p>
+      </footer>
       </div>
-    </>
   );
 }
-//  src/Home/home-prelogin.js

@@ -94,7 +94,6 @@ async function createQuiz(req, res) {
     // res.json({ quizId: quizRef.id, questions });
     res.json({ questions, quizId: quizRef.id });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: error.message });
   }
 }
@@ -139,7 +138,6 @@ async function addQuizResult(req, res) {
 
     res.json({ message: "Quiz results saved", totalScore });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: error.message });
   }
 }
@@ -163,7 +161,7 @@ async function createQuizFromConversation(req, res) {
     const prompt = `
     You are an expert physiology teacher.
     Create a quiz for high school or undergraduate students.
-    Generate 15 multiple-choice questions based on the content below.
+    Generate 10 multiple-choice questions based on the content below.
     Each question must have 4 answer choices.
     Output the result as a JSON array of objects in this exact format:
     [
@@ -202,7 +200,7 @@ async function createQuizFromConversation(req, res) {
 
     await setDoc(quizRef, {
     systems: title,
-    numQuestions: 15,
+    numQuestions: 10,
     difficulty: "-",
     createdAt: serverTimestamp(),
     sourceConversation: conversationId || null,
@@ -220,7 +218,6 @@ async function createQuizFromConversation(req, res) {
     // res.json({ quizId: quizRef.id, questions });
     res.json({ questions, quizId: quizRef.id });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: error.message });
   }
 };

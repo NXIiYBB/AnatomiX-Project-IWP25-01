@@ -1,22 +1,12 @@
 import React from 'react';
 import './chatbot.css';
 import { useState, useEffect, useRef } from 'react';
-// import { BiHome, BiBookAlt, BiMessage } from 'react-icons/bi';
-// import { VscLightbulbSparkle } from 'react-icons/vsc';
-// import { BsPersonCircle } from 'react-icons/bs';
-import { BiSolidCommentAdd } from 'react-icons/bi';
 import Navbar from './navbar';
-import { auth } from "../firebase";
-import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from "react-router-dom";
-import { db } from "../firebase"; // ✅ ไฟล์ที่ export db จาก Firebase config
-import { 
-  collection, 
-  getDocs, 
-  getDoc, 
-  doc 
-} from "firebase/firestore";
+import { db } from "../firebase";
+import { collection, getDocs, getDoc, doc } from "firebase/firestore";
 import ReactMarkdown from "react-markdown";
+import Loading from "./loading";
 
 function Chat({uid}) {
 	const [topic, setTopic] = useState('');
@@ -30,6 +20,9 @@ function Chat({uid}) {
 	const [message, setMessage] = useState([]);
 	const location = useLocation();
 	const navigate = useNavigate();
+	const [showChat, setShowChat] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [isTyping, setIsTyping] = useState(false);
 
 	useEffect(() => {
 		const { id } = location.state || {};
@@ -38,45 +31,31 @@ function Chat({uid}) {
 		}
 	}, [location.state]); 
 
-//   const uida = auth.currentUser?.uid;
-//   console.log(uida)
-	// const [uid, setUid] = useState(null);
+  	useEffect(() => {
+		// console.log(uid);
+		if (!uid) return;
 
-//   useEffect(() => {
-//     const unsubscribe = onAuthStateChanged(auth, (user) => {
-//       if (user) {
-//         console.log("✅ Logged in user:", user.uid);
-//         setUid(user.uid);
-//       } else {
-//         console.log("⚠️ No user logged in");
-//         setUid(null);
-//       }
-//     });
-// 	return () => unsubscribe();
-//   }, []);
-  // ดึง conversation list
-  useEffect(() => {
-	// console.log(uid);
-    if (!uid) return;
-
-    const fetchConversations = async () => {
-      try {
-        const res = await fetch(
-          `http://localhost:5001/anatomix-c8c63/us-central1/api/chat/historyList`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({uid}),
-	  });
-	//   console.log(uid);
-        const data = await res.json();
-        setChatHistory(data.res);
-		console.log(data); // data.res ต้องมี id + title
-      } catch (err) {
-        console.error("Error fetching conversations:", err);
-      }
-    };
+		setLoading(true);
+		const fetchConversations = async () => {
+		try {
+			const res = await fetch(
+			`http://localhost:5001/anatomix-c8c63/us-central1/api/chat/historyList`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({uid}),
+		});
+		//   console.log(uid);
+			const data = await res.json();
+			setChatHistory(data.res);
+			console.log(data); // data.res ต้องมี id + title
+			setSelectedConversationId(data.res[0].id);
+			setLoading(false);
+		} catch (err) {
+			console.error("Error fetching conversations:", err);
+		}
+		};
 
 		fetchConversations();
 	}, [uid]);
@@ -173,7 +152,7 @@ function Chat({uid}) {
 
 		// แสดงข้อความผู้ใช้ในหน้าจอทันที
 		setMessages((prev) => [...prev, { text: userMessage, role: "user" }]);
-
+		setIsTyping(true);
 		try {
 			const response = await fetch(
 				"http://localhost:5001/anatomix-c8c63/us-central1/api/chat",
@@ -198,6 +177,7 @@ function Chat({uid}) {
 
 			// สมมติ response เป็น { res: message }
 			console.log(data.response);
+			setIsTyping(false);
 			setMessages((prev) => [...prev, data.response]);
 
 			// clear input
@@ -209,22 +189,16 @@ function Chat({uid}) {
 	// Start new chat
 	const startNewChat = () => {
 		setTopic('');
-		setShowTopicInput(true);
+		// setShowTopicInput(true);
 		setMessages([]);
 		setInputMessage('');
-	};
+		setShowTopicInput(true);
 
-	const handleGenerateQuiz = async (e) => {
-		e.preventDefault();
-		Swal.fire({
-			icon: 'success',
-			title: 'Quiz generated',
-			confirmButtonColor: '#0256f2'
-		});
 	};
 
 	const handleCreateQuiz = async (e, conversationId) => {
 		e.preventDefault();
+		setLoading(true);
 		const convoRef = collection(db, `users/${uid}/conversations/${conversationId}/messages`);
 		const snap = await getDocs(convoRef);
 		const content = snap.docs.map(d => d.data().text).join(" ");
@@ -241,6 +215,7 @@ function Chat({uid}) {
 		const data = await response.json();
 		console.log("✅ Created quiz:", data);
 		// navigate(`/quiz/${data.quizId}`);
+		setLoading(false);
 		navigate("/quiz", { state: { title: title, quizId: data.quizId, questions: data.questions } });
 	};
 
@@ -252,149 +227,132 @@ function Chat({uid}) {
 	// 	{ id: 'profile', icon: <BsPersonCircle />, label: 'Profile', href: '#profile' },
 	// ];
 
+	if (loading) {
+        return (
+            <div className="chatbot-container">
+            <Navbar /> 
+            <Loading />
+            </div>
+    )};
+
 	return (
 		<div className="chatbot-container">
-			<div className="main-layout">
+      <div className={`main-layout ${showChat ? "show-chat" : ""}`}>
 
-				{/* Navigation */}
-				<Navbar />
+        {/* Navigation */}
+        <Navbar />
 
-				{/* Center Chat Area */}
-				<div className="chat-area">
-					{/* <div className="header-title">
-						<h1>AI ChatBot</h1>
-					</div> */}
+        {/* Chat Area */}
+        <div className="chat-area">
+          <div className="topic-display">
+            {(showChat && window.innerWidth < 768) && (
+              <button className="back-btn" onClick={() => setShowChat(false)}>←</button>
+            )}
+            <h3>{
+              chatHistory.find((chat) => chat.id === selectedConversationId)?.title
+              || "Select Topic"
+            }</h3>
+          </div>
 
+          {!showTopicInput && (
+            <>
+              <div className="messages-container">
+                {messages.map(message => (
+                  <div key={message.id} className={`message ${message.role}`}>
+                    <div className="message-content">
+                      <p><ReactMarkdown>{message.text}</ReactMarkdown></p>
+                    </div>
+                  </div>
+                ))}
 
-					{/* Topic Display */}
-					<div className="topic-display">
-						<h3>{
-							chatHistory.find((chat) => chat.id === selectedConversationId)?.title
-							|| "Select Topic"
-						}</h3>
-					</div>
-
-
-					{/* Topic Input Modal
-					{showTopicInput && (
-						<div className="topic-modal">
-							<div className="topic-modal-content">
-								<h2>Start Learning!</h2>
-								<p>What would you like to ask or talk about?</p>
-								<form onSubmit={handleTopicSubmit}>
-									<input
-										type="text"
-										value={topic}
-										onChange={(e) => setTopic(e.target.value)}
-										// placeholder="เช่น การทำอาหาร, เทคโนโลยี, การศึกษา..."
-										className="topic-input"
-										autoFocus
-									/>
-									<button type="submit" className="topic-submit-btn">
-										Start
-									</button>
-								</form>
-							</div>
+				{isTyping && (
+					<div className="message ai typing">
+						<div className="message-content">
+						<div className="dots">
+							<span className="dot"></span>
+							<span className="dot"></span>
+							<span className="dot"></span>
 						</div>
-					)} */}
-
-					{/* Chat Messages */}
-					{!showTopicInput && (
-						<>
-							<div className="messages-container">
-								{messages.map(message => (
-									<div key={message.id} className={`message ${message.role}`}>
-										<div className="message-content">
-											<p><ReactMarkdown>{message.text}</ReactMarkdown></p>
-											{/* <span className="timestamp">{message.timestamp}</span> */}
-										</div>
-									</div>
-								))}
-								<div ref={messagesEndRef} />
-							</div>
-
-							{/* Message Input */}
-							<form onSubmit={handleMessageSubmit} className="message-form">
-								<div className="input-container">
-									<input
-										type="text"
-										value={inputMessage}
-										onChange={(e) => setInputMessage(e.target.value)}
-										placeholder="Type a new message here"
-										className="message-input"
-									/>
-									<div className='button-group'>
-										<button type="submit" className="send-btn">Send</button>
-										<button type='button' className='quiz-btn' onClick={(e) => handleCreateQuiz(e, selectedConversationId)}>Generate Quiz</button>
-									</div>
-								</div>
-							</form>
-						</>
-					)}
-				</div>
-
-				{/* Right History Sidebar */}
-				<div className="right-sidebar">
-					<div className="sidebar-header">
-						<h3>Chat history</h3>
-						<button className="new-chat-btn" onClick={startNewChat}>
-							<span><BiSolidCommentAdd /></span> Create New Topic</button>
-					</div>
-					<div className="history-list">
-						{chatHistory.length === 0 ? (
-							<div className="empty-history">
-								<p>No chat history.</p>
-							</div>
-						) : (
-							chatHistory.map((conv) => (
-								<div
-									key={conv.id}
-									className={"history-item"}
-									onClick={() => setSelectedConversationId(conv.id)}
-								>
-									<div className="history-topic" onClick={() => setTopic(conv.title)}>
-										<h4>{conv.title}</h4>
-									</div>
-								</div>
-							))
-						)}
-					</div>
-				</div>
-				{/* Topic Input Modal */}
-					{showTopicInput && (
-						<div className="topic-modal">
-							<div className="topic-modal-content">
-								<h2>Start Learning!</h2>
-								<p>What would you like to ask or talk about?</p>
-								<form onSubmit={handleTopicSubmit}>
-									<input
-										type="text"
-										value={topic}
-										onChange={(e) => setTopic(e.target.value)}
-										// placeholder="เช่น การทำอาหาร, เทคโนโลยี, การศึกษา..."
-										className="topic-input"
-										autoFocus
-									/>
-									<button type="submit" className="topic-submit-btn">
-										Start
-									</button>
-								</form>
-							</div>
 						</div>
+					</div>
 					)}
-			</div>
-		</div>
+
+                <div ref={messagesEndRef} />
+              </div>
+
+              <form onSubmit={handleMessageSubmit} className="message-form">
+                <div className="input-container">
+                  <input
+                    type="text"
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    placeholder="Type a new message here"
+                    className="message-input"
+                  />
+                  <div className='button-group'>
+                    <button type="submit" className="send-btn">Send</button>
+                    <button type='button' className='quiz-btn' onClick={(e) => handleCreateQuiz(e, selectedConversationId)}>Generate Quiz</button>
+                  </div>
+                </div>
+              </form>
+            </>
+          )}
+        </div>
+
+        {/* Sidebar */}
+        <div className="right-sidebar">
+          <div className="sidebar-header">
+            <h3>Chat history</h3>
+            <button className="new-chat-btn" onClick={startNewChat}>
+              <span>🗯️</span> Create New Topic
+            </button>
+          </div>
+          <div className="history-list">
+            {chatHistory.length === 0 ? (
+              <div className="empty-history"><p>No chat history.</p></div>
+            ) : (
+              chatHistory.map((conv) => (
+                <div
+                  key={conv.id}
+                  className={"history-item"}
+                  onClick={() => {
+                    setSelectedConversationId(conv.id);
+                    setTopic(conv.title);
+                    setShowChat(true);
+                  }}
+                >
+                  <div className="history-topic">
+                    <h4>{conv.title}</h4>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Topic Input Modal */}
+        {showTopicInput && (
+          <div className="topic-modal">
+            <div className="topic-modal-content">
+              <button className="close-btn" onClick={() => setShowTopicInput(false)}>×</button>
+              <h2>Start Learning!</h2>
+              <p>What would you like to ask or talk about?</p>
+              <form onSubmit={handleTopicSubmit}>
+                <input
+                  type="text"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  className="topic-input"
+                  autoFocus
+                />
+                <button type="submit" className="topic-submit-btn">Start</button>
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
 	);
-	// return (
-	//   <div className="chatbot">
-	//     <Sidebar />
-	//     <div className="chatbot--content">
-	//       <ChatContent />
-	//       <HistoryTopic />
-	//     </div>
-	//   </div>
-
-	// );
 };
 
 export default Chat;

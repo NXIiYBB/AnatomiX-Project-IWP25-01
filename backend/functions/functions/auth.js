@@ -58,7 +58,6 @@ async function createUser(req, res, next) {
       updatedAt: serverTimestamp(),
     });
 
-    console.log("✅ User created with ID:", uid);
     next();
   } catch (error) {
     res.status(400).json("❌ Error creating user:", error);

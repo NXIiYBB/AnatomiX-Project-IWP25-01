@@ -21,9 +21,9 @@ function Navbar() {
 
             <nav className={`menu-container ${open ? "open" : ""}`}>
                 <ul className="menu--list">
-                    <li>
+                    {/* <li>
                         <Link to="/home-loggedin" className="item"><BiHome className="icon" />Home</Link>
-                    </li>
+                    </li> */}
                     <li>
                         <Link to="/chat" className="item"><BiMessage className="icon" />ChatBot</Link>
                     </li>
@@ -35,10 +35,6 @@ function Navbar() {
                     </li>
                 </ul>
             </nav>
-
-            {/* <div className="profile">
-                <Link to="/profile" className="profile-item"><BsPersonCircle className="profile-icon" /></Link>
-            </div> */}
         </div>
 
     );

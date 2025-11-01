@@ -40,7 +40,7 @@ async function signUp(req, res) {
             const conversationRef = doc(conversationsRef);
             
             await setDoc(conversationRef, {
-                title: `Chat with ${req.body.username}`,
+                title: `Your First Step with AnatomiX`,
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
             });

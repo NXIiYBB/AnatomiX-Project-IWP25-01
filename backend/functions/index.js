@@ -110,7 +110,6 @@ app.post("/chat", async (req, res) => {
       createdAt: serverTimestamp(),
     });
   } catch (error) {
-    console.error("Chat error:", error);
     res.status(500).json({ error: "Something went wrong" });
   }
 });

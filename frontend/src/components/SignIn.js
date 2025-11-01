@@ -17,7 +17,6 @@ function SignIn({ setIsLoggedIn, setUid }) {
 	// ฟังก์ชัน Sign In
 	const handleSignIn = async (e) => {
 		e.preventDefault();
-		console.log("sign in!")
 		try {
 			const res = await fetch(
 				"http://127.0.0.1:5001/anatomix-c8c63/us-central1/api/logIn",
@@ -37,16 +36,11 @@ function SignIn({ setIsLoggedIn, setUid }) {
 					confirmButtonColor: '#0256f2'
 				}).then(() => {
 					setIsLoggedIn(true);
-          setUid(data.uid);
+          			setUid(data.uid);
 					console.log('Sign In Success');
-					navigate("/home-loggedin");
+					navigate("/chat");
 				});
 
-				// console.log("✅ Sign In success: " + JSON.stringify(data));
-				// setIsLoggedIn(true);
-
-				// เก็บ token ไว้ถ้ามี
-				// localStorage.setItem("token", data.token);
 			} else {
 				console.log("❌ Sign In failed: " + (data.error || "Unknown error"));
 				Swal.fire({
@@ -64,7 +58,6 @@ function SignIn({ setIsLoggedIn, setUid }) {
 	// ฟังก์ชัน Sign Up
 	const handleSignUp = async (e) => {
 		e.preventDefault();
-		console.log("sign up!")
 		try {
 			const res = await fetch(
 				"http://127.0.0.1:5001/anatomix-c8c63/us-central1/api/signUp",
@@ -84,9 +77,8 @@ function SignIn({ setIsLoggedIn, setUid }) {
 					text: 'Please check your email to verify your account.',
 					confirmButtonColor: '#0256f2'
 				});
-				console.log("✅ Sign Up success: " + JSON.stringify(data));
 				setIsActive(true);
-			}else{
+			} else {
 				console.log("❌ Sign In failed: " + (data.error || "Unknown error"));
 				Swal.fire({
 					icon: 'warning',
@@ -113,6 +105,10 @@ function SignIn({ setIsLoggedIn, setUid }) {
 						<label>Password</label>
 						<input type='password' id='password' name='password' placeholder='Enter Password' required onChange={e => setPassword(e.target.value)}></input><br></br>
 						<button type='submit'>Sign In</button>
+						<div className="mobile-toggle">
+							<p>Don't have an account?</p>
+							<button type="button" onClick={handleClick}>Create Account</button>
+						</div>
 					</form>
 				</div>
 				<div className='form-container sign-up'>
@@ -127,6 +123,10 @@ function SignIn({ setIsLoggedIn, setUid }) {
 						<label>Password</label>
 						<input type='password' id='password' name='password' placeholder='Enter Password' required onChange={e => setPassword(e.target.value)}></input><br></br>
 						<button type='submit' value={'Submit'}>Sign Up</button>
+						<div className="mobile-toggle">
+							<p>Have an account?</p>
+							<button type="button" onClick={handleClick}>Sign In</button>
+						</div>
 					</form>
 				</div>
 				<div className='toggle-container'>
